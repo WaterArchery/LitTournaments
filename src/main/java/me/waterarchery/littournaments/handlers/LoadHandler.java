@@ -161,6 +161,14 @@ public class LoadHandler {
             logger.log("Found MythicMobs hook.");
             instance.getServer().getPluginManager().registerEvents(new MythicMobsKillListener(), instance);
         }
+        if (Bukkit.getPluginManager().isPluginEnabled("RivalHarvesterHoes")) {
+            logger.log("Found RivalHarvesterHoes hook.");
+            instance.getServer().getPluginManager().registerEvents(new RivalHoeListener(), instance);
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("EvenMoreFish")) {
+            logger.log("Found EvenMoreFish hook.");
+            instance.getServer().getPluginManager().registerEvents(new EvenMoreFishListener(), instance);
+        }
     }
 
     private void registerMetrics() {

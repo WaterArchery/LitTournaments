@@ -20,6 +20,10 @@ Objective: ITEM_BREAK_TOURNAMENT
 # joined the tournaments.
 GlowItemIfJoined: true
 
+# Should we restart the tournament after it is finished?
+# If you set this to false, you need to start the tournament manually.
+RestartAfterFinished: true
+
 # Join checkers allows you to modify
 # how players can join tournaments.
 # Permission for joining tournaments is: littournaments.player.join.tournamentName

@@ -67,7 +67,7 @@ public class TournamentGUI {
             boolean hideAttributes = yml.getBoolean("Items." + tournamentName + ".HideAttributes");
             parseLore(itemStack, tournamentPlayer, tournament);
 
-            boolean glowItemIfJoined = yml.getBoolean("GlowItemIfJoined", true);
+            boolean glowItemIfJoined = tournament.getYamlConfiguration().getBoolean("GlowItemIfJoined", true);
 
             GuiItem guiItem = ItemBuilder.from(itemStack)
                     .flags(ItemFlag.HIDE_ATTRIBUTES)

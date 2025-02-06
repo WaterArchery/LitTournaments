@@ -14,7 +14,6 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <server.directory>${user.home}\Desktop\Testserver\plugins</server.directory>
     </properties>
 
     <build>
@@ -40,7 +39,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>${server.directory}/LitTournaments.jar</outputFile>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
@@ -184,6 +182,24 @@
             <version>5.2.3.1</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/ExcellentCrates-5.2.3.1.jar</systemPath>
+        </dependency>
+
+        <!-- RivalHarvesterHoes Hook -->
+        <dependency>
+            <groupId>me.rivaldev</groupId>
+            <artifactId>RivalHarvesterHoes</artifactId>
+            <version>2.1.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/RivalHarvesterHoesAPI.jar</systemPath>
+        </dependency>
+
+        <!-- RivalHarvesterHoes Hook -->
+        <dependency>
+            <groupId>com.github.Oheers</groupId>
+            <artifactId>EvenMoreFish</artifactId>
+            <version>2.0.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/even-more-fish-2.0.0-RELEASE.jar</systemPath>
         </dependency>
 
         <!-- Duels Hook -->

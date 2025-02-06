@@ -170,6 +170,27 @@ public class TournamentCommand extends BaseCommand {
         }
     }
 
+    @SubCommand("start")
+    @Permission("littournaments.admin.start")
+    public void start(CommandSender sender, @Suggestion("tournaments") String tournamentName) {
+        LitLibs libs = LitTournaments.getLitLibs();
+        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
+        Tournament tournament = tournamentHandler.getTournament(tournamentName);
+
+        if (tournament != null) {
+            if (!tournament.isActive()) {
+                libs.getMessageHandler().sendLangMessage(sender, "TournamentStartAdmin");
+                tournament.startTournament();
+            }
+            else {
+                libs.getMessageHandler().sendLangMessage(sender, "AlreadyActiveTournament");
+            }
+        }
+        else {
+            libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
+        }
+    }
+
     @SubCommand("update")
     @Permission("littournaments.admin.update")
     public void update(CommandSender sender, @Suggestion("tournaments") String tournamentName) {

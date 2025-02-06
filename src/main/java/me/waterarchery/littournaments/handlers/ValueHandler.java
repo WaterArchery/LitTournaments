@@ -56,6 +56,10 @@ public class ValueHandler {
     public String getRemainingTime(Tournament tournament) {
         LitLibs libs = LitTournaments.getLitLibs();
 
+        if (!tournament.isActive()) {
+            return libs.getMessageHandler().getLangMessage("Placeholders.NotActive");
+        }
+
         String remainingTime = libs.getMessageHandler().getLangMessage("Placeholders.RemainingTime");
         Duration remaining = tournament.getRemainingTime();
 

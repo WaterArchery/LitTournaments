@@ -13,14 +13,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public class Tournament {
 
     private final String identifier;
     private final YamlConfiguration yamlConfiguration;
-    private final boolean isActive;
+    private final boolean shouldRestartAfterFinished;
+    private boolean isActive;
     private final String timePeriod;
     private final String coolName;
     private BukkitTask finishTask;
@@ -34,6 +38,7 @@ public class Tournament {
 
         this.isActive = yamlConfiguration.getBoolean("Active");
         this.timePeriod = yamlConfiguration.getString("TimePeriod");
+        this.shouldRestartAfterFinished = yamlConfiguration.getBoolean("RestartAfterFinished", true);
 
         this.coolName = yamlConfiguration.getString("CoolName", identifier);
 
@@ -44,7 +49,9 @@ public class Tournament {
         joinChecker = new JoinChecker(yamlConfiguration, this);
         actionChecker = new ActionChecker(yamlConfiguration, this);
         leaderboard = new TournamentLeaderboard(this);
-        startFinishTask();
+
+        if (isActive)
+            startFinishTask();
     }
 
     public boolean checkWorldEnabled(String worldName) {
@@ -96,14 +103,14 @@ public class Tournament {
     }
 
     public void startFinishTask() {
-        if (finishTask != null) finishTask.cancel();
+        stopFinishTask();
 
         LocalDateTime finishTime = getFinishTime();
         LocalDateTime now = LocalDateTime.now();
         Duration remaining = Duration.between(now, finishTime);
         long inTicks = remaining.getSeconds() * 20L;
 
-        finishTask = Bukkit.getScheduler().runTaskLater(LitTournaments.getInstance(), this::finishTournament,inTicks);
+        finishTask = Bukkit.getScheduler().runTaskLater(LitTournaments.getInstance(), this::finishTournament, inTicks);
     }
 
     public void stopFinishTask() {
@@ -124,17 +131,55 @@ public class Tournament {
 
         CompletableFuture.runAsync(database.getReloadTournamentRunnable(tournament))
                 .thenRun(() -> {
+                    if (shouldRestartAfterFinished) {
+                        tournamentHandler.parseRewards(tournament);
+                        database.clearTournament(tournament);
+                        playerHandler.clearPlayerValues(tournament);
+                        getLeaderboard().clear();
+                        stopFinishTask();
+                        return;
+                    }
+
+                    File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + this.identifier + ".yml");
+                    yamlConfiguration.set("Active", false);
+                    try {
+                        yamlConfiguration.save(file);
+                    } catch (IOException e) {
+                        LitTournaments.getInstance().getLogger().log(Level.WARNING, "Error saving tournament file: " + this.identifier, e);
+                    }
+
+                    this.isActive = false;
                     tournamentHandler.parseRewards(tournament);
-                    database.clearTournament(tournament);
-                    playerHandler.clearPlayerValues(tournament);
-                    getLeaderboard().clear();
                     stopFinishTask();
-                }).thenRun(() -> Bukkit.getScheduler().runTaskLater(LitTournaments.getInstance(), () -> {
-                    startFinishTask();
-                    TournamentStartEvent tournamentStartEvent = new TournamentStartEvent(tournament);
-                    Bukkit.getPluginManager().callEvent(tournamentStartEvent);
-                    tournamentHandler.parseConditionalCommand(tournament, "TOURNAMENT_START");
-                }, waitTime * 20L));
+                }).thenRun(() -> {
+                    if (!shouldRestartAfterFinished) return;
+
+                    Bukkit.getScheduler().runTaskLater(LitTournaments.getInstance(), this::startTournament, waitTime * 20L);
+                });
+    }
+
+    public void startTournament() {
+        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
+        Database database = LitTournaments.getDatabase();
+        PlayerHandler playerHandler = PlayerHandler.getInstance();
+
+        startFinishTask();
+        database.clearTournament(this);
+        playerHandler.clearPlayerValues(this);
+        getLeaderboard().clear();
+
+        TournamentStartEvent tournamentStartEvent = new TournamentStartEvent(this);
+        Bukkit.getPluginManager().callEvent(tournamentStartEvent);
+        tournamentHandler.parseConditionalCommand(this, "TOURNAMENT_START");
+        this.isActive = true;
+
+        File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + this.identifier + ".yml");
+        yamlConfiguration.set("Active", true);
+        try {
+            yamlConfiguration.save(file);
+        } catch (IOException e) {
+            LitTournaments.getInstance().getLogger().log(Level.WARNING, "Error saving tournament file: " + this.identifier, e);
+        }
     }
 
     public String getCoolName() { return coolName; }

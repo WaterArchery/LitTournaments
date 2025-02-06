@@ -16,5 +16,7 @@ softdepend:
   - EssentialsX
   - Duels
   - MythicMobs
+  - RivalHarvesterHoes
+  - EvenMoreFish
 depend:
   - LitLibs
