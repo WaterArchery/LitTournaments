@@ -169,6 +169,10 @@ public class LoadHandler {
             logger.log("Found EvenMoreFish hook.");
             instance.getServer().getPluginManager().registerEvents(new EvenMoreFishListener(), instance);
         }
+        if (Bukkit.getPluginManager().isPluginEnabled("ShopGuiPlus")) {
+            logger.log("Found ShopGuiPlus hook.");
+            instance.getServer().getPluginManager().registerEvents(new ShopGuiPlusBuyListener(), instance);
+        }
     }
 
     private void registerMetrics() {

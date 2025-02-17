@@ -202,6 +202,14 @@
             <systemPath>${basedir}/libs/even-more-fish-2.0.0-RELEASE.jar</systemPath>
         </dependency>
 
+        <!-- ShopGuiPlus Hook -->
+        <dependency>
+            <groupId>com.github.brcdev-minecraft</groupId>
+            <artifactId>shopgui-api</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Duels Hook -->
         <dependency>
             <groupId>com.github.Realizedd.Duels</groupId>
