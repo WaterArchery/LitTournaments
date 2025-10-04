@@ -74,7 +74,7 @@ public class TournamentMenuFile extends ConfigManager {
         addOptional(ConfigPart.noComment("Items.block_break.Slot", 10));
         addOptional(ConfigPart.noComment("Items.block_break.HideAttributes", true));
         addOptional(ConfigPart.of("Items.block_break.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                  List.of("You can set it -1 to disable")));
         addOptional(ConfigPart.noComment("Items.block_break.Lore", Arrays.asList(
                 "",
                 "<#CCFFEE>You can <#47D4FF>break blocks <#CCFFEE>to become",
@@ -112,7 +112,7 @@ public class TournamentMenuFile extends ConfigManager {
         addOptional(ConfigPart.noComment("Items.block_place.Slot", 13));
         addOptional(ConfigPart.noComment("Items.block_place.HideAttributes", true));
         addOptional(ConfigPart.of("Items.block_place.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                  List.of("You can set it -1 to disable")));
         addOptional(ConfigPart.noComment("Items.block_place.Lore", Arrays.asList(
                 "",
                 "<#CCFFEE>You can <#47D4FF>place blocks <#CCFFEE>to become",
@@ -150,7 +150,7 @@ public class TournamentMenuFile extends ConfigManager {
         addOptional(ConfigPart.noComment("Items.item_craft.Slot", 16));
         addOptional(ConfigPart.noComment("Items.item_craft.HideAttributes", true));
         addOptional(ConfigPart.of("Items.item_craft.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                  List.of("You can set it -1 to disable")));
         addOptional(ConfigPart.noComment("Items.item_craft.Lore", Arrays.asList(
                 "",
                 "<#CCFFEE>You can <#47D4FF>craft items <#CCFFEE>to become",
@@ -188,7 +188,7 @@ public class TournamentMenuFile extends ConfigManager {
         addOptional(ConfigPart.noComment("Items.mob_kill.Slot", 28));
         addOptional(ConfigPart.noComment("Items.mob_kill.HideAttributes", true));
         addOptional(ConfigPart.of("Items.mob_kill.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                  List.of("You can set it -1 to disable")));
         addOptional(ConfigPart.noComment("Items.mob_kill.Lore", Arrays.asList(
                 "",
                 "<#CCFFEE>You can <#47D4FF>kill mobs <#CCFFEE>to become",
@@ -226,7 +226,7 @@ public class TournamentMenuFile extends ConfigManager {
         addOptional(ConfigPart.noComment("Items.item_break.Slot", 31));
         addOptional(ConfigPart.noComment("Items.item_break.HideAttributes", true));
         addOptional(ConfigPart.of("Items.item_break.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                  List.of("You can set it -1 to disable")));
         addOptional(ConfigPart.noComment("Items.item_break.Lore", Arrays.asList(
                 "",
                 "<#CCFFEE>You can <#47D4FF>break your items <#CCFFEE>to become",
@@ -264,7 +264,7 @@ public class TournamentMenuFile extends ConfigManager {
         addOptional(ConfigPart.noComment("Items.player_kill.Slot", 34));
         addOptional(ConfigPart.noComment("Items.player_kill.HideAttributes", true));
         addOptional(ConfigPart.of("Items.player_kill.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                  List.of("You can set it -1 to disable")));
         addOptional(ConfigPart.noComment("Items.player_kill.Lore", Arrays.asList(
                 "",
                 "<#CCFFEE>You can <#47D4FF>kill players <#CCFFEE>to become",

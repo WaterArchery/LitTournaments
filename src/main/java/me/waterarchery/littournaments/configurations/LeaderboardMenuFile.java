@@ -101,7 +101,7 @@ public class LeaderboardMenuFile extends ConfigManager {
         )));
         addDefault(ConfigPart.noComment("Items.playerTemplate.HideAttributes", true));
         addDefault(ConfigPart.of("Items.playerTemplate.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                 List.of("You can set it -1 to disable")));
         addDefault(ConfigPart.noComment("Items.playerTemplate.Lore", Arrays.asList(
                 "",
                 "<#47D4FF><bold>PLAYER STATS",
@@ -120,7 +120,7 @@ public class LeaderboardMenuFile extends ConfigManager {
         addDefault(ConfigPart.noComment("Items.ownPlayer.Slot", 4));
         addDefault(ConfigPart.noComment("Items.ownPlayer.HideAttributes", true));
         addDefault(ConfigPart.of("Items.playerTemplate.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                 List.of("You can set it -1 to disable")));
         addDefault(ConfigPart.noComment("Items.ownPlayer.Lore", Arrays.asList(
                 "",
                 "<#47D4FF><bold>YOUR STATS",
@@ -133,7 +133,7 @@ public class LeaderboardMenuFile extends ConfigManager {
         addOptional(ConfigPart.noComment("Items.previousPage.Slot", 37));
         addOptional(ConfigPart.noComment("Items.previousPage.HideAttributes", true));
         addOptional(ConfigPart.of("Items.previousPage.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                  List.of("You can set it -1 to disable")));
         addOptional(ConfigPart.noComment("Items.previousPage.Lore", Arrays.asList(
                 "",
                 "<#CCFFEE>Click here to navigate",
@@ -145,7 +145,7 @@ public class LeaderboardMenuFile extends ConfigManager {
         addOptional(ConfigPart.noComment("Items.nextPage.Slot", 43));
         addOptional(ConfigPart.noComment("Items.nextPage.HideAttributes", true));
         addOptional(ConfigPart.of("Items.nextPage.CustomModelData", -1,
-                List.of("You can set it -1 to disable")));
+                                  List.of("You can set it -1 to disable")));
         addOptional(ConfigPart.noComment("Items.nextPage.Lore", Arrays.asList(
                 "",
                 "<#CCFFEE>Click here to navigate",

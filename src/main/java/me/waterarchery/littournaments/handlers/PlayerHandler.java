@@ -27,7 +27,8 @@ public class PlayerHandler {
         return instance;
     }
 
-    private PlayerHandler() { }
+    private PlayerHandler() {
+    }
 
     public TournamentPlayer getPlayer(UUID uuid) {
         for (TournamentPlayer tournamentPlayer : players) {
@@ -75,8 +76,7 @@ public class PlayerHandler {
                 if (point != -9999) {
                     // Loading existing tournaments
                     pointMap.put(tournament, point);
-                }
-                else if (isJoinNow) {
+                } else if (isJoinNow) {
                     // Joining it if player can join
                     JoinChecker joinChecker = tournament.getJoinChecker();
                     UUID uuid = player.getUUID();

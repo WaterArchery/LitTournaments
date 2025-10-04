@@ -1,6 +1,7 @@
 package me.waterarchery.littournaments.models;
 
 
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import lombok.Getter;
 import me.waterarchery.littournaments.LitTournaments;
 import me.waterarchery.littournaments.api.events.TournamentEndEvent;
@@ -12,7 +13,6 @@ import me.waterarchery.littournaments.handlers.TournamentHandler;
 import me.waterarchery.littournaments.handlers.WebhookHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class Tournament {
     private boolean isActive;
     private final String timePeriod;
     private final String coolName;
-    private BukkitTask finishTask;
+    private WrappedTask finishTask;
     private JoinChecker joinChecker;
     private ActionChecker actionChecker;
     private TournamentLeaderboard leaderboard;
@@ -38,11 +38,11 @@ public class Tournament {
         this.identifier = identifier;
         this.yamlConfiguration = yamlConfiguration;
 
-        this.isActive = yamlConfiguration.getBoolean("Active");
-        this.timePeriod = yamlConfiguration.getString("TimePeriod");
-        this.shouldRestartAfterFinished = yamlConfiguration.getBoolean("RestartAfterFinished", true);
+        isActive = yamlConfiguration.getBoolean("Active");
+        timePeriod = yamlConfiguration.getString("TimePeriod");
+        shouldRestartAfterFinished = yamlConfiguration.getBoolean("RestartAfterFinished", true);
 
-        this.coolName = yamlConfiguration.getString("CoolName", identifier);
+        coolName = yamlConfiguration.getString("CoolName", identifier);
 
         load();
     }
@@ -82,17 +82,15 @@ public class Tournament {
         LocalDate now = LocalDate.now();
 
         if (timePeriod.equalsIgnoreCase("daily")) {
-            return now.atTime(23,59, 59);
-        }
-        else if (timePeriod.equalsIgnoreCase("weekly")) {
+            return now.atTime(23, 59, 59);
+        } else if (timePeriod.equalsIgnoreCase("weekly")) {
             LocalDate endOfWeekDate = now.with(DayOfWeek.SUNDAY);
             LocalTime endOfDayTime = LocalTime.of(23, 59, 59);
 
             return LocalDateTime.of(endOfWeekDate, endOfDayTime);
-        }
-        else if (timePeriod.equalsIgnoreCase("monthly")) {
+        } else if (timePeriod.equalsIgnoreCase("monthly")) {
             int lastDayOfMonth = now.lengthOfMonth();
-            return now.withDayOfMonth(lastDayOfMonth).atTime(23,59, 59);
+            return now.withDayOfMonth(lastDayOfMonth).atTime(23, 59, 59);
         }
 
         return null;
@@ -112,7 +110,7 @@ public class Tournament {
         Duration remaining = Duration.between(now, finishTime);
         long inTicks = remaining.getSeconds() * 20L;
 
-        finishTask = Bukkit.getScheduler().runTaskLater(LitTournaments.getInstance(), this::finishTournament, inTicks);
+        finishTask = LitTournaments.getFoliaLib().getScheduler().runLater(this::finishTournament, inTicks);
     }
 
     public void stopFinishTask() {
@@ -142,21 +140,21 @@ public class Tournament {
                         return;
                     }
 
-                    File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + this.identifier + ".yml");
+                    File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + identifier + ".yml");
                     yamlConfiguration.set("Active", false);
                     try {
                         yamlConfiguration.save(file);
                     } catch (IOException e) {
-                        LitTournaments.getInstance().getLogger().log(Level.WARNING, "Error saving tournament file: " + this.identifier, e);
+                        LitTournaments.getInstance().getLogger().log(Level.WARNING, "Error saving tournament file: " + identifier, e);
                     }
 
-                    this.isActive = false;
+                    isActive = false;
                     tournamentHandler.parseRewards(tournament);
                     stopFinishTask();
                 }).thenRun(() -> {
                     if (!shouldRestartAfterFinished) return;
 
-                    Bukkit.getScheduler().runTaskLater(LitTournaments.getInstance(), this::startTournament, waitTime * 20L);
+                    LitTournaments.getFoliaLib().getScheduler().runLater(this::startTournament, waitTime * 20L);
                 });
     }
 
@@ -173,14 +171,14 @@ public class Tournament {
         TournamentStartEvent tournamentStartEvent = new TournamentStartEvent(this);
         Bukkit.getPluginManager().callEvent(tournamentStartEvent);
         tournamentHandler.parseConditionalCommand(this, "TOURNAMENT_START");
-        this.isActive = true;
+        isActive = true;
 
-        File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + this.identifier + ".yml");
+        File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + identifier + ".yml");
         yamlConfiguration.set("Active", true);
         try {
             yamlConfiguration.save(file);
         } catch (IOException e) {
-            LitTournaments.getInstance().getLogger().log(Level.WARNING, "Error saving tournament file: " + this.identifier, e);
+            LitTournaments.getInstance().getLogger().log(Level.WARNING, "Error saving tournament file: " + identifier, e);
         }
     }
 

@@ -33,65 +33,57 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
         ValueHandler valueHandler = ValueHandler.getInstance();
         TournamentPlayer tournamentPlayer = playerHandler.getPlayer(player.getUniqueId());
 
-        if(params.endsWith("_position")) {
+        if (params.endsWith("_position")) {
             String tournamentName = params.replace("_position", "");
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
                 return valueHandler.getPlayerPosition(tournamentPlayer, tournament);
             }
-        }
-        else if(params.endsWith("_score")) {
+        } else if (params.endsWith("_score")) {
             String tournamentName = params.replace("_score", "");
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
                 return valueHandler.getPlayerScore(tournamentPlayer, tournament);
             }
-        }
-        else if(params.contains("_score_")) {
+        } else if (params.contains("_score_")) {
             String tournamentName = params.split("_score_")[0];
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
                 int pos = Integer.parseInt(params.split("_score_")[1]);
                 return valueHandler.getPlayerScoreWithPosition(pos, tournament) + "";
             }
-        }
-        else if(params.contains("_player_")) {
+        } else if (params.contains("_player_")) {
             String tournamentName = params.split("_player_")[0];
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
                 int pos = Integer.parseInt(params.split("_player_")[1]);
                 return valueHandler.getPlayerNameWithPosition(pos, tournament);
             }
-        }
-        else if(params.contains("_remaining_time_days")) {
+        } else if (params.contains("_remaining_time_days")) {
             String tournamentName = params.split("_remaining_time_days")[0];
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
                 return tournament.getRemainingTime().toDays() + "";
             }
-        }
-        else if(params.contains("_remaining_time_hours")) {
+        } else if (params.contains("_remaining_time_hours")) {
             String tournamentName = params.split("_remaining_time_hours")[0];
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
                 return tournament.getRemainingTime().toHours() + "";
             }
-        }
-        else if(params.contains("_remaining_time_minutes")) {
+        } else if (params.contains("_remaining_time_minutes")) {
             String tournamentName = params.split("_remaining_time_minutes")[0];
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
                 return tournament.getRemainingTime().toMinutes() + "";
             }
-        }
-        else if(params.contains("_remaining_time_seconds")) {
+        } else if (params.contains("_remaining_time_seconds")) {
             String tournamentName = params.split("_remaining_time_seconds")[0];
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
                 return tournament.getRemainingTime().toSeconds() + "";
             }
-        }
-        else if(params.contains("_remaining_time")) {
+        } else if (params.contains("_remaining_time")) {
             String tournamentName = params.split("_remaining_time")[0];
             Tournament tournament = tournamentHandler.getTournament(tournamentName);
             if (tournament != null) {
@@ -103,7 +95,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
     }
 
     public void unRegister() {
-        this.unregister();
+        unregister();
     }
 
 }

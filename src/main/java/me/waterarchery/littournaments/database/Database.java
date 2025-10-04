@@ -11,20 +11,26 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Database {
 
     protected final LitTournaments instance;
-    private static final ExecutorService threadPool = Executors.newFixedThreadPool(20);
+    private final ExecutorService threadPool;
 
     public String createTableToken = "CREATE TABLE IF NOT EXISTS {{TOURNAMENT_NAME}} (" +
             "`player` varchar(36) NOT NULL PRIMARY KEY," +
             "`score` int(11) NOT NULL" +
             ");";
 
-    public Database(LitTournaments instance){
+    public Database(LitTournaments instance) {
         this.instance = instance;
+        ThreadFactory factory = Thread.ofVirtual()
+                .name("littournaments-database-worker-", 0)
+                .uncaughtExceptionHandler((thread, throwable) -> throwable.printStackTrace())
+                .factory();
+        threadPool = Executors.newThreadPerTaskExecutor(factory);
     }
 
     public abstract Connection getSQLConnection();
@@ -32,7 +38,7 @@ public abstract class Database {
     public abstract void initialize();
 
     public void load(List<Tournament> tournaments) {
-        try (Connection connection = getSQLConnection()){
+        try (Connection connection = getSQLConnection()) {
             tournaments.forEach(tournament -> {
                 try {
                     String tableName = tournament.getIdentifier();
@@ -42,13 +48,11 @@ public abstract class Database {
                     s.close();
 
                     reloadLeaderboard(tournament);
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             });
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -56,7 +60,7 @@ public abstract class Database {
     public void addPoint(UUID uuid, Tournament tournament, long point) {
         Runnable runnable = () -> {
             String query = String.format("INSERT INTO %s (player, score) VALUES(?, ?) ON CONFLICT(player)" +
-                    " DO UPDATE SET score=score + ? WHERE player = ?;", tournament.getIdentifier());
+                                                 " DO UPDATE SET score=score + ? WHERE player = ?;", tournament.getIdentifier());
 
             try (Connection connection = getSQLConnection()) {
                 PreparedStatement stmt = connection.prepareStatement(query);
@@ -67,8 +71,7 @@ public abstract class Database {
                 stmt.setString(4, uuid.toString());
 
                 stmt.executeUpdate();
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         };
@@ -86,8 +89,7 @@ public abstract class Database {
                 stmt.setLong(2, point);
 
                 stmt.executeUpdate();
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         };
@@ -108,8 +110,7 @@ public abstract class Database {
                 return rs.getLong("score");
             else
                 return -9999;
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -124,8 +125,7 @@ public abstract class Database {
                 stmt.setLong(2, 0L);
 
                 stmt.executeUpdate();
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         };
@@ -142,8 +142,7 @@ public abstract class Database {
                 stmt.setString(1, uuid.toString());
 
                 stmt.executeUpdate();
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         };
@@ -173,8 +172,7 @@ public abstract class Database {
                     leaderboard.setPosition(tournamentValue, pos);
                     pos++;
                 }
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         };
@@ -187,8 +185,7 @@ public abstract class Database {
             try (Connection connection = getSQLConnection()) {
                 PreparedStatement stmt = connection.prepareStatement(query);
                 stmt.executeUpdate();
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         };
@@ -196,7 +193,7 @@ public abstract class Database {
         threadPool.submit(runnable);
     }
 
-    public void shutdownPool(){
+    public void shutdownPool() {
         try {
             LitLibs libs = LitTournaments.getLitLibs();
             libs.getLogger().log("Shutting down thread pool");

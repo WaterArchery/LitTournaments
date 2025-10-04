@@ -16,7 +16,7 @@ import java.util.List;
 
 public class EssentialsXMoneyListener implements Listener {
 
-    @EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMoneyAction(UserBalanceUpdateEvent event) {
         PointHandler pointHandler = PointHandler.getInstance();
         TournamentHandler tournamentHandler = TournamentHandler.getInstance();

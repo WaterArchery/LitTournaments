@@ -22,7 +22,8 @@ public class PointHandler {
         return instance;
     }
 
-    private PointHandler() { }
+    private PointHandler() {
+    }
 
     public void addPoint(UUID uuid, Tournament tournament, String worldName, String actionName, int point) {
         if (tournament.checkWorldEnabled(worldName) && tournament.checkActionAllowed(actionName)) {
@@ -40,7 +41,7 @@ public class PointHandler {
         if (tournamentPlayer == null) return;
 
         if (tournamentPlayer.isRegistered(tournament)) {
-            Bukkit.getScheduler().runTask(LitTournaments.getInstance(), () -> {
+            LitTournaments.getFoliaLib().getScheduler().runNextTick((task) -> {
                 PointAddEvent event = new PointAddEvent(tournament, uuid, point, actionName);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
@@ -52,8 +53,7 @@ public class PointHandler {
                 long currentPoint = map.getOrDefault(tournament, 0L);
                 map.replace(tournament, currentPoint + point);
             });
-        }
-        else if (tournamentPlayer.isLoading()) {
+        } else if (tournamentPlayer.isLoading()) {
             Player player = Bukkit.getPlayer(uuid);
             libs.getMessageHandler().sendLangMessage(player, "StillLoading");
         }

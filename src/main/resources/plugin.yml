@@ -4,6 +4,7 @@ main: me.waterarchery.littournaments.LitTournaments
 api-version: '1.16'
 authors: [ WaterArchery ]
 description: Create fun tournaments for players
+folia-supported: true
 libraries:
   - org.mariadb.jdbc:mariadb-java-client:3.5.2
   - com.zaxxer:HikariCP:6.0.0

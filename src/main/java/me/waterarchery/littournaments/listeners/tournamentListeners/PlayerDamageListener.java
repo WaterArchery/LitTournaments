@@ -16,12 +16,12 @@ import java.util.List;
 
 public class PlayerDamageListener implements Listener {
 
-    @EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageByEntityEvent event) {
         PointHandler pointHandler = PointHandler.getInstance();
         TournamentHandler tournamentHandler = TournamentHandler.getInstance();
 
-        if (event.getDamager() instanceof  Player player) {
+        if (event.getDamager() instanceof Player player) {
             Entity entity = event.getEntity();
             World world = player.getWorld();
             int damage = (int) event.getDamage();

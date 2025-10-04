@@ -12,22 +12,39 @@ public class LitTournamentsAPI {
         return instance;
     }
 
-    private LitTournamentsAPI() { }
+    private LitTournamentsAPI() {
+    }
 
-    public LitTournaments getLitTournaments() { return LitTournaments.getInstance(); }
+    public LitTournaments getLitTournaments() {
+        return LitTournaments.getInstance();
+    }
 
-    public CommandHandler getCommandHandler() { return CommandHandler.getInstance(); }
+    public CommandHandler getCommandHandler() {
+        return CommandHandler.getInstance();
+    }
 
-    public GUIHandler getGUIHandler() { return GUIHandler.getInstance(); }
+    public GUIHandler getGUIHandler() {
+        return GUIHandler.getInstance();
+    }
 
-    public LoadHandler getLoadHandler() { return LoadHandler.getInstance(); }
+    public LoadHandler getLoadHandler() {
+        return LoadHandler.getInstance();
+    }
 
-    public PlayerHandler getPlayerHandler() { return PlayerHandler.getInstance(); }
+    public PlayerHandler getPlayerHandler() {
+        return PlayerHandler.getInstance();
+    }
 
-    public TournamentHandler getTournamentHandler() { return TournamentHandler.getInstance(); }
+    public TournamentHandler getTournamentHandler() {
+        return TournamentHandler.getInstance();
+    }
 
-    public PointHandler getPointHandler() { return PointHandler.getInstance(); }
+    public PointHandler getPointHandler() {
+        return PointHandler.getInstance();
+    }
 
-    public ValueHandler getValueHandler() { return ValueHandler.getInstance(); }
+    public ValueHandler getValueHandler() {
+        return ValueHandler.getInstance();
+    }
 
 }

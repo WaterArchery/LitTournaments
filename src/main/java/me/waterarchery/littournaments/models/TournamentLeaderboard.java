@@ -1,10 +1,9 @@
 package me.waterarchery.littournaments.models;
 
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import lombok.Getter;
 import me.waterarchery.littournaments.LitTournaments;
 import me.waterarchery.littournaments.database.Database;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -14,7 +13,7 @@ public class TournamentLeaderboard {
 
     private final Tournament tournament;
     private final HashMap<Integer, TournamentValue> leaderboard = new HashMap<>();
-    private BukkitTask refreshTask;
+    private WrappedTask refreshTask;
 
     public TournamentLeaderboard(Tournament tournament) {
         this.tournament = tournament;
@@ -24,7 +23,7 @@ public class TournamentLeaderboard {
     public int getPlayerPos(TournamentPlayer tournamentPlayer) {
         for (int pos : leaderboard.keySet()) {
             TournamentValue value = leaderboard.get(pos);
-            if (value.getUuid().equals(tournamentPlayer.getUUID())) return pos;
+            if (value.uuid().equals(tournamentPlayer.getUUID())) return pos;
         }
 
         return 0;
@@ -40,7 +39,7 @@ public class TournamentLeaderboard {
         LitTournaments instance = LitTournaments.getInstance();
         long taskInterval = instance.getConfig().getLong("LeaderboardRefresh") * 20L;
 
-        refreshTask = Bukkit.getScheduler().runTaskTimerAsynchronously(LitTournaments.getInstance(), () -> {
+        refreshTask = LitTournaments.getFoliaLib().getScheduler().runTimerAsync(() -> {
             Database database = LitTournaments.getDatabase();
             database.reloadLeaderboard(tournament);
         }, taskInterval, taskInterval);

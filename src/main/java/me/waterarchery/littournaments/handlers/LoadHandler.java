@@ -23,7 +23,10 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -38,7 +41,8 @@ public class LoadHandler {
         return instance;
     }
 
-    private LoadHandler() { }
+    private LoadHandler() {
+    }
 
     public void load() {
         LitLibs libs = LitTournaments.getLitLibs();
@@ -75,13 +79,11 @@ public class LoadHandler {
             database = new SQLite(instance);
             database.initialize();
             LitTournaments.setDatabase(database);
-        }
-        else if (databaseType.equalsIgnoreCase("mysql")) {
+        } else if (databaseType.equalsIgnoreCase("mysql")) {
             database = new MySQL(instance);
             database.initialize();
             LitTournaments.setDatabase(database);
-        }
-        else {
+        } else {
             logger.error("You made a mistake while configuring DatabaseType. Please set it to SQLite or MySQL");
             instance.getPluginLoader().disablePlugin(instance);
             return;
@@ -189,13 +191,13 @@ public class LoadHandler {
         }));
 
         metrics.addCustomChart(new SimplePie("webhook_used",
-                () -> String.valueOf(FileHandler.getConfig().getYml().getBoolean("DiscordWebhook.Enabled", false))));
+                                             () -> String.valueOf(FileHandler.getConfig().getYml().getBoolean("DiscordWebhook.Enabled", false))));
 
         metrics.addCustomChart(new SimplePie("database_type",
-                () -> FileHandler.getConfig().getYml().getString("Database.DatabaseType", "SQLite")));
+                                             () -> FileHandler.getConfig().getYml().getString("Database.DatabaseType", "SQLite")));
 
         metrics.addCustomChart(new SimplePie("language_used",
-                () -> FileHandler.getConfig().getYml().getString("Language", "en")));
+                                             () -> FileHandler.getConfig().getYml().getString("Language", "en")));
 
         metrics.addCustomChart(new SingleLineChart("tournaments_count", () -> tournamentHandler.getTournaments().size()));
     }
@@ -212,15 +214,14 @@ public class LoadHandler {
             instance.saveResource("tournaments/item_craft.yml", false);
             instance.saveResource("tournaments/player_kill.yml", false);
             instance.saveResource("tournaments/mob_kill.yml", false);
-        }
-        else {
+        } else {
             final String path = "tournaments";
             final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
 
             try {
                 final JarFile jar = new JarFile(jarFile);
                 final Enumeration<JarEntry> entries = jar.entries();
-                while(entries.hasMoreElements()) {
+                while (entries.hasMoreElements()) {
                     final String name = entries.nextElement().getName();
                     if (name.startsWith(path + "/") && !name.endsWith("tournaments/")) {
                         instance.saveResource(name, false);
@@ -228,8 +229,7 @@ public class LoadHandler {
                     }
                 }
                 jar.close();
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         }

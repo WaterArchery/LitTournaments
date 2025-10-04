@@ -99,17 +99,16 @@ public class GUIHandler {
         if (material.contains("HEAD-")) {
             String headBase = material.replace("HEAD-", "");
             return XSkull.createItem().profile(Profileable.detect(headBase)).apply();
-        }
-        else if (material.equalsIgnoreCase("PLAYER") && uuid != null) {
+        } else if (material.equalsIgnoreCase("PLAYER") && uuid != null) {
             try {
                 return XSkull.createItem()
                         .profile(Profileable.of(uuid))
                         .fallback(Profileable.of(new ItemStack(Material.PLAYER_HEAD)))
                         .apply();
+            } catch (Exception e) {
+                return new ItemStack(Material.PLAYER_HEAD);
             }
-            catch (Exception e) { return new ItemStack(Material.PLAYER_HEAD); }
-        }
-        else {
+        } else {
             return XMaterial.matchXMaterial(material)
                     .map(XMaterial::parseItem)
                     .orElse(new ItemStack(Material.STONE));

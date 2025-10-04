@@ -25,8 +25,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -58,6 +58,10 @@
                                 <relocation>
                                     <pattern>org.jetbrains.annotations</pattern>
                                     <shadedPattern>me.waterarchery.littournaments.utils.annotations</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.tcoded.folialib</pattern>
+                                    <shadedPattern>me.waterarchery.littournaments.utils.folialib</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -132,6 +136,10 @@
             <id>minecraft-libraries</id>
             <name>Minecraft Libraries</name>
             <url>https://libraries.minecraft.net/</url>
+        </repository>
+        <repository>
+            <id>tcoded-releases</id>
+            <url>https://repo.tcoded.com/releases</url>
         </repository>
     </repositories>
 
@@ -246,7 +254,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21-R0.1-SNAPSHOT</version>
+            <version>1.21.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -262,7 +270,7 @@
         <dependency>
             <groupId>com.github.WaterArchery</groupId>
             <artifactId>LitLibs</artifactId>
-            <version>1.1.32</version>
+            <version>1.1.38</version>
             <scope>provided</scope>
         </dependency>
 
@@ -302,6 +310,14 @@
             <artifactId>lombok</artifactId>
             <version>1.18.34</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- FoliaLib -->
+        <dependency>
+            <groupId>com.tcoded</groupId>
+            <artifactId>FoliaLib</artifactId>
+            <version>0.5.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

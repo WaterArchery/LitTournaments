@@ -32,16 +32,16 @@ public class LangFile extends ConfigManager {
         addDefault(ConfigPart.noComment("NotActiveTournament", "<red>This tournament is not active!"));
         addDefault(ConfigPart.noComment("LoadingLeaderboard", "<#47D4FF>Loading leaderboard! It can take several seconds."));
         addDefault(ConfigPart.noComment("TournamentEndAdmin",
-                "<#CCFFEE>You have <#47D4FF>successfully finished <#CCFFEE>the tournament. It may take a <#47D4FF>few seconds to <#CCFFEE>take effect."));
+                                        "<#CCFFEE>You have <#47D4FF>successfully finished <#CCFFEE>the tournament. It may take a <#47D4FF>few seconds to <#CCFFEE>take effect."));
         addDefault(ConfigPart.noComment("TournamentStartAdmin",
-                "<#CCFFEE>You have <#47D4FF>successfully started <#CCFFEE>the tournament. It may take a <#47D4FF>few seconds to <#CCFFEE>take effect."));
+                                        "<#CCFFEE>You have <#47D4FF>successfully started <#CCFFEE>the tournament. It may take a <#47D4FF>few seconds to <#CCFFEE>take effect."));
         addDefault(ConfigPart.noComment("AlreadyActiveTournament",
-                "<#CCFFEE>This tournament is already <#47D4FF>active!"));
+                                        "<#CCFFEE>This tournament is already <#47D4FF>active!"));
 
         addDefault(ConfigPart.noComment("Placeholders.NotActive", "<red>Not active!"));
         addDefault(ConfigPart.noComment("Placeholders.None", "None"));
         addDefault(ConfigPart.noComment("Placeholders.NotRegistered", "<#CCFFEE>Not Registered"));
         addDefault(ConfigPart.noComment("Placeholders.RemainingTime", "<red>%day% days %hour% hours and %minute% minutes"));
     }
-    
+
 }

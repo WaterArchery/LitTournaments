@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 public class SQLite extends Database {
 
-    public SQLite(LitTournaments instance){
+    public SQLite(LitTournaments instance) {
         super(instance);
     }
 
@@ -32,7 +32,7 @@ public class SQLite extends Database {
     @Override
     public void initialize() {
         File dataFolder = new File(instance.getDataFolder(), "database.db");
-        if (!dataFolder.exists()){
+        if (!dataFolder.exists()) {
             try {
                 dataFolder.createNewFile();
             } catch (IOException e) {

@@ -19,7 +19,10 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 public class TournamentHandler {
@@ -33,7 +36,8 @@ public class TournamentHandler {
         return instance;
     }
 
-    private TournamentHandler() { }
+    private TournamentHandler() {
+    }
 
     public void reloadTournaments() {
         LitTournaments instance = LitTournaments.getInstance();
@@ -140,23 +144,19 @@ public class TournamentHandler {
                 TournamentValue value = leaderboard.getPlayer(1).orElse(null);
                 if (value != null) name = value.getName();
                 command = command.replace("%tournament_pos_1%", name);
-            }
-            else if (command.contains("tournament_pos_2")) {
+            } else if (command.contains("tournament_pos_2")) {
                 TournamentValue value = leaderboard.getPlayer(2).orElse(null);
                 if (value != null) name = value.getName();
                 command = command.replace("%tournament_pos_2%", name);
-            }
-            else if (command.contains("tournament_pos_3")) {
+            } else if (command.contains("tournament_pos_3")) {
                 TournamentValue value = leaderboard.getPlayer(3).orElse(null);
                 if (value != null) name = value.getName();
                 command = command.replace("%tournament_pos_3%", name);
-            }
-            else if (command.contains("tournament_pos_4")) {
+            } else if (command.contains("tournament_pos_4")) {
                 TournamentValue value = leaderboard.getPlayer(4).orElse(null);
                 if (value != null) name = value.getName();
                 command = command.replace("%tournament_pos_4%", name);
-            }
-            else if (command.contains("tournament_pos_5")) {
+            } else if (command.contains("tournament_pos_5")) {
                 TournamentValue value = leaderboard.getPlayer(5).orElse(null);
                 if (value != null) name = value.getName();
                 command = command.replace("%tournament_pos_5%", name);
@@ -171,18 +171,16 @@ public class TournamentHandler {
         if (command.startsWith("[MESSAGE]") && targetPlayer != null) {
             Player player = Bukkit.getPlayer(targetPlayer);
             if (player != null) libs.getMessageHandler().sendMessage(player, command.replace("[MESSAGE] ", ""));
-        }
-        else if (command.startsWith("[BROADCAST]")) {
+        } else if (command.startsWith("[BROADCAST]")) {
             String message = ChatUtils.colorizeLegacy(command.replace("[BROADCAST] ", ""));
             Bukkit.broadcastMessage(message);
-        }
-        else if (command.startsWith("[COMMAND]")) {
+        } else if (command.startsWith("[COMMAND]")) {
             command = command.replace("[COMMAND] ", "");
             if (targetPlayer != null) command = command.replace("%player%", targetPlayer);
 
             String finalCommand = command;
-            Bukkit.getScheduler().runTask(LitTournaments.getInstance(),
-                    () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand));
+            LitTournaments.getFoliaLib().getScheduler().runNextTick(
+                    (task) -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand));
         }
     }
 

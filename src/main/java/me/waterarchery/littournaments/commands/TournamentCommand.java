@@ -35,8 +35,7 @@ public class TournamentCommand extends BaseCommand {
         if (sender instanceof Player player) {
             BaseGui gui = TournamentGUI.of(player);
             gui.open(player);
-        }
-        else {
+        } else {
             libs.getMessageHandler().sendLangMessage(sender, "InGameOnly");
         }
     }
@@ -64,17 +63,14 @@ public class TournamentCommand extends BaseCommand {
                     tournamentPlayer.join(tournament);
                     libs.getMessageHandler().sendLangMessage(sender, "SuccessfullyRegistered");
                     libs.getSoundHandler().sendSound(player, "Sounds.SuccessfullyJoined");
-                }
-                else {
+                } else {
                     libs.getSoundHandler().sendSound(player, "Sounds.AlreadyJoined");
                     libs.getMessageHandler().sendLangMessage(sender, "AlreadyJoined");
                 }
-            }
-            else {
+            } else {
                 libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
             }
-        }
-        else {
+        } else {
             libs.getMessageHandler().sendLangMessage(sender, "InGameOnly");
         }
     }
@@ -100,16 +96,13 @@ public class TournamentCommand extends BaseCommand {
                 if (tournamentPlayer.isRegistered(tournament)) {
                     tournamentPlayer.leave(tournament);
                     libs.getMessageHandler().sendLangMessage(sender, "SuccessfullyLeaved");
-                }
-                else {
+                } else {
                     libs.getMessageHandler().sendLangMessage(sender, "JoinFirst");
                 }
-            }
-            else {
+            } else {
                 libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
             }
-        }
-        else {
+        } else {
             libs.getMessageHandler().sendLangMessage(sender, "InGameOnly");
         }
     }
@@ -125,12 +118,10 @@ public class TournamentCommand extends BaseCommand {
 
             if (tournament != null) {
                 LeaderboardGUI.openMenu(player, tournament, true);
-            }
-            else {
+            } else {
                 libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
             }
-        }
-        else {
+        } else {
             libs.getMessageHandler().sendLangMessage(sender, "InGameOnly");
         }
     }
@@ -162,12 +153,10 @@ public class TournamentCommand extends BaseCommand {
             if (tournament.isActive()) {
                 libs.getMessageHandler().sendLangMessage(sender, "TournamentEndAdmin");
                 tournament.finishTournament();
-            }
-            else {
+            } else {
                 libs.getMessageHandler().sendLangMessage(sender, "NotActiveTournament");
             }
-        }
-        else {
+        } else {
             libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
         }
     }
@@ -183,12 +172,10 @@ public class TournamentCommand extends BaseCommand {
             if (!tournament.isActive()) {
                 libs.getMessageHandler().sendLangMessage(sender, "TournamentStartAdmin");
                 tournament.startTournament();
-            }
-            else {
+            } else {
                 libs.getMessageHandler().sendLangMessage(sender, "AlreadyActiveTournament");
             }
-        }
-        else {
+        } else {
             libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
         }
     }
@@ -205,12 +192,10 @@ public class TournamentCommand extends BaseCommand {
                 Database database = LitTournaments.getDatabase();
                 database.reloadLeaderboard(tournament);
                 libs.getMessageHandler().sendLangMessage(sender, "LeaderboardUpdated");
-            }
-            else {
+            } else {
                 libs.getMessageHandler().sendLangMessage(sender, "NotActiveTournament");
             }
-        }
-        else {
+        } else {
             libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
         }
     }

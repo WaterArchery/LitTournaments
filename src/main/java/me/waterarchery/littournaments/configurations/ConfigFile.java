@@ -18,7 +18,7 @@ public class ConfigFile extends ConfigManager {
     public void initializeDefaults() {
         addDefault(ConfigPart.noComment("Prefix", "<#47D4FF><bold>ʟɪᴛᴛᴏᴜʀɴᴀᴍᴇɴᴛs <reset><dark_gray>»<reset>  "));
         addDefault(ConfigPart.of("Language", "en",
-                Collections.singletonList("Currently only en and tr available")));
+                                 Collections.singletonList("Currently only en and tr available")));
 
         addDefault(ConfigPart.of("LeaderboardRefresh", 60, Arrays.asList(
                 "Its in seconds.",
@@ -47,13 +47,13 @@ public class ConfigFile extends ConfigManager {
         addDefault(ConfigPart.noComment("DiscordWebhook.Description", "The daily %tournament% Tournament has finished!\\n"));
         addDefault(ConfigPart.noComment("DiscordWebhook.Parts.1.Title", "\uD83E\uDD47 1st Place"));
         addDefault(ConfigPart.noComment("DiscordWebhook.Parts.1.Description",
-                "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 1000 Game Balance\\n"));
+                                        "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 1000 Game Balance\\n"));
         addDefault(ConfigPart.noComment("DiscordWebhook.Parts.2.Title", "\uD83E\uDD48 2nd Place"));
         addDefault(ConfigPart.noComment("DiscordWebhook.Parts.2.Description",
-                "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 500 Game Balance\\n"));
+                                        "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 500 Game Balance\\n"));
         addDefault(ConfigPart.noComment("DiscordWebhook.Parts.3.Title", "\uD83E\uDD49 3rd Place"));
         addDefault(ConfigPart.noComment("DiscordWebhook.Parts.3.Description",
-                "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 250 Game Balance\\n"));
+                                        "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 250 Game Balance\\n"));
 
         addDefault(ConfigPart.noComment("SoundVolume", 2));
         addDefault(ConfigPart.of("Sounds.MenuOpen", "BLOCK_ANVIL_BREAK", Collections.singletonList("# You can set sounds \"\" to disable them.")));

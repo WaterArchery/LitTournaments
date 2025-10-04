@@ -82,14 +82,12 @@ public class TournamentGUI {
                         if (event.getClick() == ClickType.RIGHT && !disableRightClick) {
                             player.closeInventory();
                             LeaderboardGUI.openMenu(player, tournament, true);
-                        }
-                        else  {
+                        } else {
                             if (tournamentPlayer.isRegistered(tournament)) {
                                 libs.getMessageHandler().sendLangMessage(player, "AlreadyJoined");
                                 libs.getSoundHandler().sendSound(player, "Sounds.AlreadyJoined");
                                 player.closeInventory();
-                            }
-                            else {
+                            } else {
                                 tournamentPlayer.join(tournament);
                                 libs.getSoundHandler().sendSound(player, "Sounds.SuccessfullyJoined");
                                 libs.getMessageHandler().sendLangMessage(player, "SuccessfullyRegistered");
@@ -121,24 +119,23 @@ public class TournamentGUI {
                 for (String placeholder : otherPlaceholders) {
                     if (placeholder.contains("leader_score_formatted_")) {
                         int pos = Integer.parseInt(placeholder
-                                .replace("leader_score_formatted_", "")
-                                .replace("%", ""));
+                                                           .replace("leader_score_formatted_", "")
+                                                           .replace("%", ""));
 
                         String score = numberFormat.format(valueHandler.getPlayerScoreWithPosition(pos, tournament));
                         part = part.replace(placeholder, score);
-                    }
-                    else if (placeholder.contains("leader_score_")) {
+                    } else if (placeholder.contains("leader_score_")) {
                         int pos = Integer.parseInt(placeholder
-                                .replace("leader_score_", "")
-                                .replace("%", ""));
+                                                           .replace("leader_score_", "")
+                                                           .replace("%", ""));
 
                         String score = String.valueOf(valueHandler.getPlayerScoreWithPosition(pos, tournament));
                         part = part.replace(placeholder, score);
                     }
                     if (placeholder.contains("leader_name_")) {
                         int pos = Integer.parseInt(placeholder
-                                .replace("leader_name_", "")
-                                .replace("%", ""));
+                                                           .replace("leader_name_", "")
+                                                           .replace("%", ""));
 
                         part = part.replace(placeholder, valueHandler.getPlayerNameWithPosition(pos, tournament));
                     }
@@ -164,8 +161,7 @@ public class TournamentGUI {
                     placeholders.add(placeholder.toString());
                     found = false;
                     placeholder = new StringBuilder();
-                }
-                else {
+                } else {
                     found = true;
                 }
             }

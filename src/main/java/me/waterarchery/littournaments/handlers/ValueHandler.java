@@ -18,7 +18,8 @@ public class ValueHandler {
         return instance;
     }
 
-    private ValueHandler() { }
+    private ValueHandler() {
+    }
 
     public String getPlayerScore(TournamentPlayer tournamentPlayer, Tournament tournament) {
         if (tournamentPlayer.isRegistered(tournament)) return tournamentPlayer.getTournamentValueMap().get(tournament) + "";
@@ -37,7 +38,7 @@ public class ValueHandler {
         TournamentLeaderboard leaderboard = tournament.getLeaderboard();
         TournamentValue value = leaderboard.getPlayer(position).orElse(null);
 
-        if (value!= null) return value.getName();
+        if (value != null) return value.getName();
 
         LitLibs libs = LitTournaments.getLitLibs();
         return libs.getMessageHandler().getLangMessage("Placeholders.None");
@@ -47,7 +48,7 @@ public class ValueHandler {
         TournamentLeaderboard leaderboard = tournament.getLeaderboard();
         TournamentValue value = leaderboard.getPlayer(position).orElse(null);
 
-        if (value!= null) return value.getValue();
+        if (value != null) return value.value();
 
         return 0;
     }

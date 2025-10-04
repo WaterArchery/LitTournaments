@@ -3,9 +3,7 @@ package me.waterarchery.littournaments.handlers;
 import me.waterarchery.littournaments.LitTournaments;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.utils.DiscordWebhook;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.awt.*;
 import java.io.IOException;
@@ -47,9 +45,12 @@ public class WebhookHandler {
             embedObject.setColor(Color.ORANGE);
             webhook.addEmbed(embedObject);
 
-            Bukkit.getScheduler().runTaskAsynchronously(LitTournaments.getInstance(), () -> {
-                try { webhook.execute(); }
-                catch (IOException ex) { throw new RuntimeException(ex); }
+            LitTournaments.getFoliaLib().getScheduler().runAsync((task) -> {
+                try {
+                    webhook.execute();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             });
         }
     }

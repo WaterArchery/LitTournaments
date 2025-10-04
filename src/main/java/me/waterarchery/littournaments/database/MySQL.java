@@ -33,9 +33,9 @@ public class MySQL extends Database {
 
         hikariConfig.setDriverClassName("org.mariadb.jdbc.Driver");
         hikariConfig.setJdbcUrl(String.format("jdbc:mariadb://%s:%s/%s",
-                config.getString("Database.MySQL.host"),
-                config.getString("Database.MySQL.port"),
-                config.getString("Database.MySQL.database")
+                                              config.getString("Database.MySQL.host"),
+                                              config.getString("Database.MySQL.port"),
+                                              config.getString("Database.MySQL.database")
         ));
 
         hikariConfig.setUsername(config.getString("Database.MySQL.user"));

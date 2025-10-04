@@ -18,7 +18,7 @@ public class TournamentPlayer {
 
     public TournamentPlayer(UUID uuid) {
         this.uuid = uuid;
-        this.isLoading = true;
+        isLoading = true;
     }
 
     public UUID getUUID() {

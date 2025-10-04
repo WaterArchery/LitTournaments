@@ -8,7 +8,10 @@ import me.waterarchery.litlibs.libs.gui.guis.Gui;
 import me.waterarchery.litlibs.libs.gui.guis.GuiItem;
 import me.waterarchery.litlibs.libs.gui.guis.PaginatedGui;
 import me.waterarchery.littournaments.LitTournaments;
-import me.waterarchery.littournaments.handlers.*;
+import me.waterarchery.littournaments.handlers.FileHandler;
+import me.waterarchery.littournaments.handlers.GUIHandler;
+import me.waterarchery.littournaments.handlers.PlayerHandler;
+import me.waterarchery.littournaments.handlers.ValueHandler;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import me.waterarchery.littournaments.models.TournamentValue;
@@ -36,7 +39,7 @@ public class LeaderboardGUI {
 
         if (sendMessage) libs.getMessageHandler().sendLangMessage(player, "LoadingLeaderboard");
 
-        Bukkit.getScheduler().runTaskAsynchronously(LitTournaments.getInstance(), () -> {
+        LitTournaments.getFoliaLib().getScheduler().runAsync((task) -> {
             String title = guiHandler.getMenuTitle(manager).replace("%tournament%", tournament.getCoolName());
             int size = guiHandler.getMenuSize(manager);
 
@@ -75,10 +78,10 @@ public class LeaderboardGUI {
                 if (i == limit) break;
 
                 i++;
-                ItemStack itemStack = guiHandler.craftItemStack(manager, "playerTemplate", "Items", value.getUuid());
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(value.getUuid());
+                ItemStack itemStack = guiHandler.craftItemStack(manager, "playerTemplate", "Items", value.uuid());
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(value.uuid());
 
-                parseItemLore(itemStack, offlinePlayer, String.valueOf(value.getValue()), String.valueOf(i));
+                parseItemLore(itemStack, offlinePlayer, String.valueOf(value.value()), String.valueOf(i));
 
                 GuiItem guiItem = ItemBuilder.from(itemStack)
                         .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS)
@@ -86,7 +89,7 @@ public class LeaderboardGUI {
                 gui.addItem(guiItem);
             }
 
-            Bukkit.getScheduler().runTask(LitTournaments.getInstance(), () -> gui.open(player));
+            LitTournaments.getFoliaLib().getScheduler().runNextTick((task2) -> gui.open(player));
         });
     }
 
@@ -96,12 +99,12 @@ public class LeaderboardGUI {
 
         assert itemMeta != null;
         itemMeta.setDisplayName(itemMeta.getDisplayName().replace("%player%",
-                Objects.requireNonNull(player.getName())));
+                                                                  Objects.requireNonNull(player.getName())));
 
         Objects.requireNonNull(itemMeta.getLore()).forEach(part -> newLore.add(part
-                .replace("%name%", player.getName())
-                .replace("%stat%", value)
-                .replace("%position%", pos)));
+                                                                                       .replace("%name%", player.getName())
+                                                                                       .replace("%stat%", value)
+                                                                                       .replace("%position%", pos)));
         itemMeta.setLore(newLore);
         itemStack.setItemMeta(itemMeta);
     }
