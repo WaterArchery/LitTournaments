@@ -10,7 +10,7 @@ import me.waterarchery.littournaments.database.MySQL;
 import me.waterarchery.littournaments.database.SQLite;
 import me.waterarchery.littournaments.hooks.PlaceholderAPIHook;
 import me.waterarchery.littournaments.listeners.JoinLeaveListeners;
-import me.waterarchery.littournaments.listeners.tournamentListeners.*;
+import me.waterarchery.littournaments.listeners.tournaments.*;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bstats.bukkit.Metrics;
@@ -160,10 +160,6 @@ public class LoadHandler {
         if (Bukkit.getPluginManager().isPluginEnabled("Duels")) {
             logger.log("Found Duels hook.");
             instance.getServer().getPluginManager().registerEvents(new DuelsWinListener(), instance);
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-            logger.log("Found MythicMobs hook.");
-            instance.getServer().getPluginManager().registerEvents(new MythicMobsKillListener(), instance);
         }
         if (Bukkit.getPluginManager().isPluginEnabled("RivalHarvesterHoes")) {
             logger.log("Found RivalHarvesterHoes hook.");

@@ -22,8 +22,10 @@ public class ConfigFile extends ConfigManager {
 
         addDefault(ConfigPart.of("LeaderboardRefresh", 60, Arrays.asList(
                 "Its in seconds.",
-                "Please don't set it under 60 seconds."
-        )));
+                "Please don't set it under 60 seconds.")));
+        addDefault(ConfigPart.of("MainServer", true, List.of(
+                "Keep it true if this server is main server on a multi server environment.",
+                "Keep it true if is not multi server environment.")));
         addDefault(ConfigPart.of("LeaderboardLimit", 32, List.of(
                 "Amount of players that listed in tournament leaderboard"
         )));

@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinLeaveListeners implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         PlayerHandler playerHandler = PlayerHandler.getInstance();
         Player player = event.getPlayer();
@@ -27,5 +27,4 @@ public class JoinLeaveListeners implements Listener {
 
         playerHandler.getPlayers().removeIf(tPlayer -> tPlayer.getUUID().equals(player.getUniqueId()));
     }
-
 }

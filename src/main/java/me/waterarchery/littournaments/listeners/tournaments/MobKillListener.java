@@ -1,4 +1,4 @@
-package me.waterarchery.littournaments.listeners.tournamentListeners;
+package me.waterarchery.littournaments.listeners.tournaments;
 
 import me.waterarchery.littournaments.handlers.PointHandler;
 import me.waterarchery.littournaments.handlers.TournamentHandler;

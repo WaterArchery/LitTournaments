@@ -1,4 +1,4 @@
-package me.waterarchery.littournaments.listeners.tournamentListeners;
+package me.waterarchery.littournaments.listeners.tournaments;
 
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import lombok.Getter;

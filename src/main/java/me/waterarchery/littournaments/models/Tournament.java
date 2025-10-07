@@ -129,33 +129,35 @@ public class Tournament {
         WebhookHandler.sendWebhook(tournament);
         int waitTime = FileHandler.getConfig().getYml().getInt("WaitTimeBetweenTournaments");
 
-        CompletableFuture.runAsync(database.getReloadTournamentRunnable(tournament))
-                .thenRun(() -> {
-                    if (shouldRestartAfterFinished) {
-                        tournamentHandler.parseRewards(tournament);
-                        database.clearTournament(tournament);
-                        playerHandler.clearPlayerValues(tournament);
-                        getLeaderboard().clear();
-                        stopFinishTask();
-                        return;
-                    }
+        CompletableFuture.runAsync(database.getReloadTournamentRunnable(tournament)).thenRun(() -> {
+            boolean mainServer = LitTournaments.getInstance().getConfig().getBoolean("MainServer");
+            if (!mainServer) return;
 
-                    File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + identifier + ".yml");
-                    yamlConfiguration.set("Active", false);
-                    try {
-                        yamlConfiguration.save(file);
-                    } catch (IOException e) {
-                        LitTournaments.getInstance().getLogger().log(Level.WARNING, "Error saving tournament file: " + identifier, e);
-                    }
+            if (shouldRestartAfterFinished) {
+                tournamentHandler.parseRewards(tournament);
+                database.clearTournament(tournament);
+                playerHandler.clearPlayerValues(tournament);
+                getLeaderboard().clear();
+                stopFinishTask();
+                return;
+            }
 
-                    isActive = false;
-                    tournamentHandler.parseRewards(tournament);
-                    stopFinishTask();
-                }).thenRun(() -> {
-                    if (!shouldRestartAfterFinished) return;
+            File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + identifier + ".yml");
+            yamlConfiguration.set("Active", false);
+            try {
+                yamlConfiguration.save(file);
+            } catch (IOException e) {
+                LitTournaments.getInstance().getLogger().log(Level.WARNING, "Error saving tournament file: " + identifier, e);
+            }
 
-                    LitTournaments.getFoliaLib().getScheduler().runLater(this::startTournament, waitTime * 20L);
-                });
+            isActive = false;
+            tournamentHandler.parseRewards(tournament);
+            stopFinishTask();
+        }).thenRun(() -> {
+            if (!shouldRestartAfterFinished) return;
+
+            LitTournaments.getFoliaLib().getScheduler().runLater(this::startTournament, waitTime * 20L);
+        });
     }
 
     public void startTournament() {

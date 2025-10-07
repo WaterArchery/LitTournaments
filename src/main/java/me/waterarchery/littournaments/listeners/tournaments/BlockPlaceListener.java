@@ -1,31 +1,32 @@
-package me.waterarchery.littournaments.listeners.tournamentListeners;
+package me.waterarchery.littournaments.listeners.tournaments;
 
-import com.oheers.fish.api.EMFFishEvent;
 import me.waterarchery.littournaments.handlers.PointHandler;
 import me.waterarchery.littournaments.handlers.TournamentHandler;
 import me.waterarchery.littournaments.models.Tournament;
-import me.waterarchery.littournaments.models.tournaments.EvenMoreFishTournament;
+import me.waterarchery.littournaments.models.tournaments.BlockPlaceTournament;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 import java.util.List;
 
-public class EvenMoreFishListener implements Listener {
+public class BlockPlaceListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onFish(EMFFishEvent event) {
+    public void onBlockPlace(BlockPlaceEvent event) {
         PointHandler pointHandler = PointHandler.getInstance();
         TournamentHandler tournamentHandler = TournamentHandler.getInstance();
         Player player = event.getPlayer();
-        World world = player.getWorld();
-        String name = event.getFish().getName();
+        Block block = event.getBlock();
+        World world = block.getWorld();
 
-        List<Tournament> tournaments = tournamentHandler.getTournaments(EvenMoreFishTournament.class);
+        List<Tournament> tournaments = tournamentHandler.getTournaments(BlockPlaceTournament.class);
         for (Tournament tournament : tournaments) {
-            pointHandler.addPoint(player.getUniqueId(), tournament, world.getName(), name, 1);
+            pointHandler.addPoint(player.getUniqueId(), tournament, world.getName(), block.getType().name(), 1);
         }
     }
 

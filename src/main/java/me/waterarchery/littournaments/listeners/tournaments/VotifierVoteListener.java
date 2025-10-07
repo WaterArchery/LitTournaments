@@ -1,4 +1,4 @@
-package me.waterarchery.littournaments.listeners.tournamentListeners;
+package me.waterarchery.littournaments.listeners.tournaments;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;

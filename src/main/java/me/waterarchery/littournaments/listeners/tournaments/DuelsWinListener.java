@@ -1,4 +1,4 @@
-package me.waterarchery.littournaments.listeners.tournamentListeners;
+package me.waterarchery.littournaments.listeners.tournaments;
 
 import me.realized.duels.api.event.match.MatchEndEvent;
 import me.waterarchery.littournaments.handlers.PointHandler;
