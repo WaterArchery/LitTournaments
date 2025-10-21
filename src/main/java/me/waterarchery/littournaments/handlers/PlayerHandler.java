@@ -14,12 +14,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 
 @Getter
 public class PlayerHandler {
 
     private static PlayerHandler instance;
+    private final ExecutorService executor;
     private final List<TournamentPlayer> players = new ArrayList<>();
 
     public static PlayerHandler getInstance() {
@@ -28,6 +29,11 @@ public class PlayerHandler {
     }
 
     private PlayerHandler() {
+        ThreadFactory factory = Thread.ofVirtual()
+                .name("tournaments-database-worker-", 0)
+                .uncaughtExceptionHandler((thread, throwable) -> throwable.printStackTrace())
+                .factory();
+        executor = Executors.newThreadPerTaskExecutor(factory);
     }
 
     public TournamentPlayer getPlayer(UUID uuid) {
@@ -69,6 +75,7 @@ public class PlayerHandler {
             HashMap<Tournament, Long> pointMap = new HashMap<>();
             LitLibs libs = LitTournaments.getLitLibs();
             Player bukkitPlayer = Bukkit.getPlayer(player.getUUID());
+            if (bukkitPlayer == null) return null;
 
             for (Tournament tournament : tournaments) {
                 // Returns -9999 if player's data is not exist
@@ -82,7 +89,7 @@ public class PlayerHandler {
                     UUID uuid = player.getUUID();
 
                     if (joinChecker.isAutoJoinEnabled() && joinChecker.canJoin(uuid)) {
-                        if (joinChecker.isMessageOnAutoJoin() && bukkitPlayer != null)
+                        if (joinChecker.isMessageOnAutoJoin())
                             libs.getMessageHandler().sendLangMessage(bukkitPlayer, "SuccessfullyRegisteredOnJoin");
                         player.join(tournament);
                     }
@@ -90,7 +97,9 @@ public class PlayerHandler {
             }
 
             return pointMap;
-        }).thenAccept((map) -> {
+        }, executor).thenAccept((map) -> {
+            if (map == null) return;
+
             player.getTournamentValueMap().putAll(map);
             player.setLoading(false);
         });

@@ -30,7 +30,7 @@ public abstract class Database {
                 .name("littournaments-database-worker-", 0)
                 .uncaughtExceptionHandler((thread, throwable) -> throwable.printStackTrace())
                 .factory();
-        threadPool = Executors.newThreadPerTaskExecutor(factory);
+        threadPool = Executors.newFixedThreadPool(10, factory);
     }
 
     public abstract Connection getSQLConnection();
