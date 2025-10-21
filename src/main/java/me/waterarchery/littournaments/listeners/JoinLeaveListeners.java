@@ -20,7 +20,7 @@ public class JoinLeaveListeners implements Listener {
         playerHandler.initializePlayer(tournamentPlayer, true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerLeave(PlayerJoinEvent event) {
         PlayerHandler playerHandler = PlayerHandler.getInstance();
         Player player = event.getPlayer();

@@ -100,7 +100,7 @@ public class PlayerHandler {
         }, executor).thenAccept((map) -> {
             if (map == null) return;
 
-            player.getTournamentValueMap().putAll(map);
+            map.forEach((k, v) -> player.getTournamentValueMap().put(k, v));
             player.setLoading(false);
         });
     }
