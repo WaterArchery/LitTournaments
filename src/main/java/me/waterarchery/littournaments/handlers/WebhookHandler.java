@@ -1,6 +1,9 @@
 package me.waterarchery.littournaments.handlers;
 
+import com.chickennw.utils.ChickenUtils;
+import com.chickennw.utils.utils.ConfigUtils;
 import me.waterarchery.littournaments.LitTournaments;
+import me.waterarchery.littournaments.configurations.ConfigFile;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.utils.DiscordWebhook;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,14 +14,14 @@ import java.io.IOException;
 public class WebhookHandler {
 
     public static void sendWebhook(Tournament tournament) {
-        FileConfiguration config = FileHandler.getConfig().getYml();
-
-        if (config.getBoolean("DiscordWebhook.Enabled")) {
-            ValueHandler valueHandler = ValueHandler.getInstance();
-            String title = config.getString("DiscordWebhook.Title").replace("%tournament%", tournament.getCoolName());
-            String description = config.getString("DiscordWebhook.Description").replace("%tournament%", tournament.getCoolName());
-            String url = config.getString("DiscordWebhook.WebhookURL");
-            String avatar = config.getString("DiscordWebhook.Avatar");
+        ConfigFile configFile = ConfigUtils.get(ConfigFile.class);
+        ConfigFile.DiscordWebhook discordWebhook = configFile.getDiscordWebhook();
+        if (discordWebhook.isEnabled()) {
+            ValueManager valueManager = ValueManager.getInstance();
+            String title = discordWebhook.getTitle().replace("%tournament%", tournament.getCoolName());
+            String description = discordWebhook.getDescription().replace("%tournament%", tournament.getCoolName());
+            String url = discordWebhook.getWebhookUrl();
+            String avatar = discordWebhook.getAvatar();
 
             DiscordWebhook webhook = new DiscordWebhook(url);
             DiscordWebhook.EmbedObject embedObject = new DiscordWebhook.EmbedObject();
@@ -27,17 +30,16 @@ public class WebhookHandler {
             embedObject.setDescription(description);
             webhook.setAvatarUrl(avatar);
 
+            FileConfiguration config = LitTournaments.getInstance().getConfig();
             for (String rawPos : config.getConfigurationSection("DiscordWebhook.Parts").getKeys(false)) {
                 int pos = Integer.parseInt(rawPos);
                 String partTitle = config.getString("DiscordWebhook.Parts." + rawPos + ".Title");
                 String partDescription = config.getString("DiscordWebhook.Parts." + rawPos + ".Description");
 
-                String player = valueHandler.getPlayerNameWithPosition(pos, tournament);
-                String score = String.valueOf(valueHandler.getPlayerScoreWithPosition(pos, tournament));
+                String player = valueManager.getPlayerNameWithPosition(pos, tournament);
+                String score = String.valueOf(valueManager.getPlayerScoreWithPosition(pos, tournament));
 
-                partDescription = partDescription
-                        .replace("%player%", player)
-                        .replace("%score%", score);
+                partDescription = partDescription.replace("%player%", player).replace("%score%", score);
 
                 embedObject.addField(partTitle, partDescription, false);
             }
@@ -45,7 +47,7 @@ public class WebhookHandler {
             embedObject.setColor(Color.ORANGE);
             webhook.addEmbed(embedObject);
 
-            LitTournaments.getFoliaLib().getScheduler().runAsync((task) -> {
+            ChickenUtils.getFoliaLib().getScheduler().runAsync((task) -> {
                 try {
                     webhook.execute();
                 } catch (IOException ex) {

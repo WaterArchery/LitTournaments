@@ -1,20 +1,20 @@
 package me.waterarchery.littournaments.commands;
 
-import dev.triumphteam.cmd.bukkit.annotation.Permission;
-import dev.triumphteam.cmd.core.BaseCommand;
-import dev.triumphteam.cmd.core.annotation.Command;
-import dev.triumphteam.cmd.core.annotation.Default;
-import dev.triumphteam.cmd.core.annotation.SubCommand;
-import dev.triumphteam.cmd.core.annotation.Suggestion;
-import me.waterarchery.litlibs.LitLibs;
-import me.waterarchery.litlibs.libs.gui.guis.BaseGui;
-import me.waterarchery.littournaments.LitTournaments;
-import me.waterarchery.littournaments.database.Database;
+import com.chickennw.utils.libs.cmd.bukkit.annotation.Permission;
+import com.chickennw.utils.libs.cmd.core.annotations.Command;
+import com.chickennw.utils.libs.cmd.core.annotations.Suggestion;
+import com.chickennw.utils.models.commands.BaseCommand;
+import com.chickennw.utils.utils.ChatUtils;
+import com.chickennw.utils.utils.ConfigUtils;
+import com.chickennw.utils.utils.SoundUtils;
+import me.waterarchery.littournaments.configurations.LangFile;
+import me.waterarchery.littournaments.configurations.SoundsFile;
+import me.waterarchery.littournaments.database.TournamentDatabase;
 import me.waterarchery.littournaments.guis.LeaderboardGUI;
 import me.waterarchery.littournaments.guis.TournamentGUI;
-import me.waterarchery.littournaments.handlers.FileHandler;
-import me.waterarchery.littournaments.handlers.PlayerHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.LoadManager;
+import me.waterarchery.littournaments.handlers.PlayerManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.JoinChecker;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
@@ -28,200 +28,180 @@ import java.util.concurrent.CompletableFuture;
 @Command(value = "littournaments", alias = {"tournaments", "tournament"})
 public class TournamentCommand extends BaseCommand {
 
-    @Default
-    public void defaultCmd(CommandSender sender) {
-        LitLibs libs = LitTournaments.getLitLibs();
+    private final LangFile langFile;
+    private final SoundsFile soundsFile;
 
-        if (sender instanceof Player player) {
-            BaseGui gui = TournamentGUI.of(player);
-            gui.open(player);
+    public TournamentCommand() {
+        super("littournaments", List.of("tournaments", "tournament"));
+        langFile = ConfigUtils.get(LangFile.class);
+        soundsFile = ConfigUtils.get(SoundsFile.class);
+    }
+
+    @Command
+    public void defaultCmd(Player player) {
+        TournamentGUI gui = new TournamentGUI(player);
+        gui.openAsync(player);
+    }
+
+    @Command("join")
+    public void join(Player player, @Suggestion("tournaments") String tournamentName) {
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        PlayerManager playerManager = PlayerManager.getInstance();
+        TournamentPlayer tournamentPlayer = playerManager.getPlayer(player.getUniqueId());
+        Tournament tournament = tournamentManager.getTournament(tournamentName);
+
+        if (!player.hasPermission("littournaments.player.join." + tournamentName) && !player.hasPermission("littournaments.player.join.*")) {
+            ChatUtils.sendPrefixedMessage(player, langFile.getNoPermission());
+            SoundUtils.sendSoundRaw(player, soundsFile.getNoPermission());
+            return;
+        }
+
+        if (tournament != null) {
+            JoinChecker joinChecker = tournament.getJoinChecker();
+            if (!tournamentPlayer.isRegistered(tournament) && joinChecker.canJoin(player.getUniqueId())) {
+                tournamentPlayer.join(tournament);
+                ChatUtils.sendPrefixedMessage(player, langFile.getSuccessfullyRegistered());
+                SoundUtils.sendSoundRaw(player, soundsFile.getSuccessfullyJoined());
+            } else {
+                ChatUtils.sendPrefixedMessage(player, langFile.getAlreadyJoined());
+                SoundUtils.sendSoundRaw(player, soundsFile.getAlreadyJoined());
+            }
         } else {
-            libs.getMessageHandler().sendLangMessage(sender, "InGameOnly");
+            ChatUtils.sendPrefixedMessage(player, langFile.getNoTournamentWithName());
         }
     }
 
-    @SubCommand("join")
-    public void join(CommandSender sender, @Suggestion("tournaments") String tournamentName) {
-        LitLibs libs = LitTournaments.getLitLibs();
+    @Command("leave")
+    public void leave(Player player, @Suggestion("tournaments") String tournamentName) {
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        PlayerManager playerManager = PlayerManager.getInstance();
+        TournamentPlayer tournamentPlayer = playerManager.getPlayer(player.getUniqueId());
+        Tournament tournament = tournamentManager.getTournament(tournamentName);
 
-        if (sender instanceof Player player) {
-            TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-            PlayerHandler playerHandler = PlayerHandler.getInstance();
-            TournamentPlayer tournamentPlayer = playerHandler.getPlayer(player.getUniqueId());
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
-
-            if (!sender.hasPermission("littournaments.player.join." + tournamentName) &&
-                    !sender.hasPermission("littournaments.player.join.*")) {
-                libs.getMessageHandler().sendLangMessage(sender, "NoPermission");
-                libs.getSoundHandler().sendSound(player, "Sounds.NoPermission");
-                return;
-            }
-
-            if (tournament != null) {
-                JoinChecker joinChecker = tournament.getJoinChecker();
-                if (!tournamentPlayer.isRegistered(tournament) && joinChecker.canJoin(player.getUniqueId())) {
-                    tournamentPlayer.join(tournament);
-                    libs.getMessageHandler().sendLangMessage(sender, "SuccessfullyRegistered");
-                    libs.getSoundHandler().sendSound(player, "Sounds.SuccessfullyJoined");
-                } else {
-                    libs.getSoundHandler().sendSound(player, "Sounds.AlreadyJoined");
-                    libs.getMessageHandler().sendLangMessage(sender, "AlreadyJoined");
-                }
-            } else {
-                libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
-            }
-        } else {
-            libs.getMessageHandler().sendLangMessage(sender, "InGameOnly");
+        if (!player.hasPermission("littournaments.player.leave." + tournamentName) && !player.hasPermission("littournaments.player.leave.*")) {
+            ChatUtils.sendPrefixedMessage(player, langFile.getNoPermission());
+            SoundUtils.sendSoundRaw(player, soundsFile.getNoPermission());
+            return;
         }
-    }
 
-    @SubCommand("leave")
-    public void leave(CommandSender sender, @Suggestion("tournaments") String tournamentName) {
-        LitLibs libs = LitTournaments.getLitLibs();
-
-        if (sender instanceof Player player) {
-            TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-            PlayerHandler playerHandler = PlayerHandler.getInstance();
-            TournamentPlayer tournamentPlayer = playerHandler.getPlayer(player.getUniqueId());
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
-
-            if (!sender.hasPermission("littournaments.player.leave." + tournamentName) &&
-                    !sender.hasPermission("littournaments.player.leave.*")) {
-                libs.getMessageHandler().sendLangMessage(sender, "NoPermission");
-                libs.getSoundHandler().sendSound(player, "Sounds.NoPermission");
-                return;
-            }
-
-            if (tournament != null) {
-                if (tournamentPlayer.isRegistered(tournament)) {
-                    tournamentPlayer.leave(tournament);
-                    libs.getMessageHandler().sendLangMessage(sender, "SuccessfullyLeaved");
-                } else {
-                    libs.getMessageHandler().sendLangMessage(sender, "JoinFirst");
-                }
+        if (tournament != null) {
+            if (tournamentPlayer.isRegistered(tournament)) {
+                tournamentPlayer.leave(tournament);
+                ChatUtils.sendPrefixedMessage(player, langFile.getSuccessfullyLeaved());
             } else {
-                libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
+                ChatUtils.sendPrefixedMessage(player, langFile.getJoinFirst());
             }
         } else {
-            libs.getMessageHandler().sendLangMessage(sender, "InGameOnly");
+            ChatUtils.sendPrefixedMessage(player, langFile.getNoTournamentWithName());
         }
     }
 
     @Permission("littournaments.player.leaderboard")
-    @SubCommand("leaderboard")
-    public void leaderboard(CommandSender sender, @Suggestion("tournaments") String tournamentName) {
-        LitLibs libs = LitTournaments.getLitLibs();
+    @Command("leaderboard")
+    public void leaderboard(Player player, @Suggestion("tournaments") String tournamentName) {
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        Tournament tournament = tournamentManager.getTournament(tournamentName);
 
-        if (sender instanceof Player player) {
-            TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
-
-            if (tournament != null) {
-                LeaderboardGUI.openMenu(player, tournament, true);
-            } else {
-                libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
-            }
+        if (tournament != null) {
+            LeaderboardGUI leaderboardGUI = new LeaderboardGUI(player, tournament, true);
+            leaderboardGUI.openAsync(player);
         } else {
-            libs.getMessageHandler().sendLangMessage(sender, "InGameOnly");
+            ChatUtils.sendPrefixedMessage(player, langFile.getNoTournamentWithName());
         }
     }
 
-    @SubCommand("reload")
+    @Command("reload")
     @Permission("littournaments.admin.reload")
     public void reload(CommandSender sender) {
-        LitLibs libs = LitTournaments.getLitLibs();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        Database database = LitTournaments.getDatabase();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        tournamentManager.reloadTournaments();
 
-        FileHandler.load();
-        tournamentHandler.reloadTournaments();
+        LoadManager loadManager = LoadManager.getInstance();
+        loadManager.loadConfigs();
 
-        List<Tournament> tournaments = tournamentHandler.getTournaments();
+        List<Tournament> tournaments = tournamentManager.getTournaments();
+        TournamentDatabase database = TournamentDatabase.getInstance();
         database.load(tournaments);
-        libs.getMessageHandler().sendLangMessage(sender, "FilesReloaded");
+
+        ChatUtils.sendPrefixedMessage(sender, langFile.getFilesReloaded());
     }
 
-
-    @SubCommand("end")
+    @Command("end")
     @Permission("littournaments.admin.end")
     public void end(CommandSender sender, @Suggestion("tournaments") String tournamentName) {
-        LitLibs libs = LitTournaments.getLitLibs();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        Tournament tournament = tournamentHandler.getTournament(tournamentName);
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        Tournament tournament = tournamentManager.getTournament(tournamentName);
 
         if (tournament != null) {
             if (tournament.isActive()) {
-                libs.getMessageHandler().sendLangMessage(sender, "TournamentEndAdmin");
+                ChatUtils.sendPrefixedMessage(sender, langFile.getTournamentEndAdmin());
                 tournament.finishTournament();
             } else {
-                libs.getMessageHandler().sendLangMessage(sender, "NotActiveTournament");
+                ChatUtils.sendPrefixedMessage(sender, langFile.getNotActiveTournament());
             }
         } else {
-            libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
+            ChatUtils.sendPrefixedMessage(sender, langFile.getNoTournamentWithName());
         }
     }
 
-    @SubCommand("start")
+    @Command("start")
     @Permission("littournaments.admin.start")
     public void start(CommandSender sender, @Suggestion("tournaments") String tournamentName) {
-        LitLibs libs = LitTournaments.getLitLibs();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        Tournament tournament = tournamentHandler.getTournament(tournamentName);
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        Tournament tournament = tournamentManager.getTournament(tournamentName);
 
         if (tournament != null) {
             if (!tournament.isActive()) {
-                libs.getMessageHandler().sendLangMessage(sender, "TournamentStartAdmin");
+                ChatUtils.sendPrefixedMessage(sender, langFile.getTournamentStartAdmin());
                 tournament.startTournament();
             } else {
-                libs.getMessageHandler().sendLangMessage(sender, "AlreadyActiveTournament");
+                ChatUtils.sendPrefixedMessage(sender, langFile.getAlreadyActiveTournament());
             }
         } else {
-            libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
+            ChatUtils.sendPrefixedMessage(sender, langFile.getNoTournamentWithName());
         }
     }
 
-    @SubCommand("update")
+    @Command("update")
     @Permission("littournaments.admin.update")
     public void update(CommandSender sender, @Suggestion("tournaments") String tournamentName) {
-        LitLibs libs = LitTournaments.getLitLibs();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        Tournament tournament = tournamentHandler.getTournament(tournamentName);
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        Tournament tournament = tournamentManager.getTournament(tournamentName);
 
         if (tournament != null) {
             if (tournament.isActive()) {
-                Database database = LitTournaments.getDatabase();
+                TournamentDatabase database = TournamentDatabase.getInstance();
                 database.reloadLeaderboard(tournament);
-                libs.getMessageHandler().sendLangMessage(sender, "LeaderboardUpdated");
+                ChatUtils.sendPrefixedMessage(sender, langFile.getLeaderboardUpdated());
             } else {
-                libs.getMessageHandler().sendLangMessage(sender, "NotActiveTournament");
+                ChatUtils.sendPrefixedMessage(sender, langFile.getAlreadyActiveTournament());
             }
         } else {
-            libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
+            ChatUtils.sendPrefixedMessage(sender, langFile.getNoTournamentWithName());
         }
     }
 
-    @SubCommand("deletedata")
+    @Command("deletedata")
     @Permission("littournaments.admin.delete")
     public void deleteData(CommandSender sender, @Suggestion("players") String playerName, @Suggestion("tournaments") String tournamentName) {
-        LitLibs libs = LitTournaments.getLitLibs();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        PlayerHandler playerHandler = PlayerHandler.getInstance();
-        Tournament tournament = tournamentHandler.getTournament(tournamentName);
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        PlayerManager playerManager = PlayerManager.getInstance();
+        Tournament tournament = tournamentManager.getTournament(tournamentName);
 
         if (tournament == null) {
-            libs.getMessageHandler().sendLangMessage(sender, "NoTournamentWithName");
+            ChatUtils.sendPrefixedMessage(sender, langFile.getNoTournamentWithName());
             return;
         }
 
         if (!tournament.isActive()) {
-            libs.getMessageHandler().sendLangMessage(sender, "NotActiveTournament");
+            ChatUtils.sendPrefixedMessage(sender, langFile.getAlreadyActiveTournament());
             return;
         }
 
         CompletableFuture.supplyAsync(() -> Bukkit.getOfflinePlayer(playerName)).thenAcceptAsync(player -> {
-            Database database = LitTournaments.getDatabase();
+            TournamentDatabase database = TournamentDatabase.getInstance();
 
-            TournamentPlayer tournamentPlayer = playerHandler.getPlayer(player.getUniqueId());
+            TournamentPlayer tournamentPlayer = playerManager.getPlayer(player.getUniqueId());
 
             if (tournamentPlayer == null) database.deleteFromTournament(player.getUniqueId(), tournament);
             else tournamentPlayer.leave(tournament);
@@ -229,5 +209,4 @@ public class TournamentCommand extends BaseCommand {
             database.reloadLeaderboard(tournament);
         });
     }
-
 }

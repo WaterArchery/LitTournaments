@@ -6,7 +6,7 @@
 
     <groupId>me.waterarchery</groupId>
     <artifactId>LitTournaments</artifactId>
-    <version>1.5.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>LitTournaments</name>
@@ -45,23 +45,19 @@
                             <relocations>
                                 <relocation>
                                     <pattern>net.wesjd.anvilgui</pattern>
-                                    <shadedPattern>me.waterarchery.littournaments.utils.anvilgui</shadedPattern>
+                                    <shadedPattern>me.waterarchery.littournaments.libs.anvilgui</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.waterarchery.littournaments.utils.bstats</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>dev.triumphteam.cmd</pattern>
-                                    <shadedPattern>me.waterarchery.littournaments.utils.cmd</shadedPattern>
+                                    <shadedPattern>me.waterarchery.littournaments.libs.bstats</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.jetbrains.annotations</pattern>
-                                    <shadedPattern>me.waterarchery.littournaments.utils.annotations</shadedPattern>
+                                    <shadedPattern>me.waterarchery.littournaments.libs.annotations</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.tcoded.folialib</pattern>
-                                    <shadedPattern>me.waterarchery.littournaments.utils.folialib</shadedPattern>
+                                    <pattern>com.chickennw.utils</pattern>
+                                    <shadedPattern>me.waterarchery.littournaments.libs.utils</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -128,10 +124,6 @@
             <id>minecraft-libraries</id>
             <name>Minecraft Libraries</name>
             <url>https://libraries.minecraft.net/</url>
-        </repository>
-        <repository>
-            <id>tcoded-releases</id>
-            <url>https://repo.tcoded.com/releases</url>
         </repository>
     </repositories>
 
@@ -235,13 +227,6 @@
             <version>0.10.2</version>
         </dependency>
 
-        <!-- Commands API -->
-        <dependency>
-            <groupId>dev.triumphteam</groupId>
-            <artifactId>triumph-cmd-bukkit</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
-
         <!-- bStats Hook -->
         <dependency>
             <groupId>org.bstats</groupId>
@@ -250,27 +235,36 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- LitLibs -->
+        <!-- Utils -->
         <dependency>
-            <groupId>com.github.WaterArchery</groupId>
-            <artifactId>LitLibs</artifactId>
-            <version>1.1.38</version>
-            <scope>provided</scope>
+            <groupId>com.chickennw</groupId>
+            <artifactId>chicken-utils</artifactId>
+            <version>1.1.1</version>
         </dependency>
 
-        <!-- MySQL -->
+        <!-- Database -->
         <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>3.5.2</version>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.6.13.Final</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- HikariCP -->
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>6.0.0</version>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-hikaricp</artifactId>
+            <version>6.6.13.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.4.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -282,6 +276,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- AnvilGUIGui -->
+        <dependency>
+            <groupId>dev.triumphteam</groupId>
+            <artifactId>triumph-gui</artifactId>
+            <version>3.1.13</version>
+        </dependency>
+
         <!-- For Heads -->
         <dependency>
             <groupId>com.mojang</groupId>
@@ -289,19 +290,13 @@
             <version>6.0.54</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.34</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- FoliaLib -->
-        <dependency>
-            <groupId>com.tcoded</groupId>
-            <artifactId>FoliaLib</artifactId>
-            <version>0.5.1</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

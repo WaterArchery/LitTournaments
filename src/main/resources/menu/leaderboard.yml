@@ -1,0 +1,133 @@
+# LitTournaments by WaterArchery
+# Wiki: https://waterarchery.gitbook.io/littournaments-wiki/
+# Spigot: https://www.spigotmc.org/members/waterarchery.963492/
+# Builtbybit: https://builtbybit.com/members/waterarchery.164059/
+#
+# File Name: leaderboard
+# Plugin Version: 1.5.0
+
+Title: <#47D4FF>%tournament% Leaderboard
+Size: 45
+Decoration:
+  item1:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 0
+    Lore: []
+  item2:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 1
+    Lore: []
+  item3:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 2
+    Lore: []
+  item4:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 3
+    Lore: []
+  item5:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 5
+    Lore: []
+  item7:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 6
+    Lore: []
+  item8:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 7
+    Lore: []
+  item9:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 8
+    Lore: []
+  item10:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 36
+    Lore: []
+  item11:
+    Name: <dark_gray>
+    Material: GREEN_STAINED_GLASS_PANE
+    CustomModelData: -1
+    HideAttributes: true
+    Slot: 44
+    Lore: []
+Items:
+  # Don't change this id.
+  # This item will be displayed in /tournament leaderboard <tournament name>.
+  # This item is the template item of the player that runs the command.
+  ownPlayer:
+    Name: <#47D4FF>%player%
+    Material: PLAYER
+    Slot: 4
+    HideAttributes: true
+    Lore:
+    - ''
+    - <#47D4FF><bold>YOUR STATS
+    - '<#47D4FF>| <#CCFFEE>Score: <#47D4FF>%stat%'
+    - '<#47D4FF>| <#CCFFEE>Position: <#47D4FF>%position%'
+  # Don't change this id.
+  # This item will be displayed in /tournament leaderboard <tournament name>.
+  # This item is the template item of all leaderboard players.
+  playerTemplate:
+    Name: <#47D4FF>%player%
+    # You can use custom head values like this:
+    # HEAD-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg2MjJhM2Q1M2NjYzc4NDM2YzBmNjYwMDRjYjRiNzcyOWM0NjZlYTEwMDY1ZTgzOWEwNmI2Mjg4YmZkYTk4NiJ9fX0=
+    # or you can use PLAYER to display player's head.
+    Material: PLAYER
+    HideAttributes: true
+    # You can set it -1 to disable
+    CustomModelData: -1
+    Lore:
+    - ''
+    - <#47D4FF><bold>PLAYER STATS
+    - '<#47D4FF>| <#CCFFEE>Player''s Name: <#47D4FF>%name%'
+    - '<#47D4FF>| <#CCFFEE>Score: <#47D4FF>%stat%'
+    - '<#47D4FF>| <#CCFFEE>Position: <#47D4FF>%position%'
+  previousPage:
+    Name: <red>Previous Page
+    Material: ARROW
+    Slot: 37
+    HideAttributes: true
+    CustomModelData: -1
+    Lore:
+    - ''
+    - <#CCFFEE>Click here to navigate
+    - <#47D4FF>previous page.
+  nextPage:
+    Name: <red>Next Page
+    Material: ARROW
+    Slot: 43
+    HideAttributes: true
+    CustomModelData: -1
+    Lore:
+    - ''
+    - <#CCFFEE>Click here to navigate
+    - <#47D4FF>next page.

@@ -1,8 +1,8 @@
 package me.waterarchery.littournaments.listeners.tournaments;
 
 import me.realized.duels.api.event.match.MatchEndEvent;
-import me.waterarchery.littournaments.handlers.PointHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.PointManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.DuelsWinTournament;
 import org.bukkit.Location;
@@ -17,15 +17,15 @@ public class DuelsWinListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCrateOpen(MatchEndEvent event) {
-        PointHandler pointHandler = PointHandler.getInstance();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
+        PointManager pointManager = PointManager.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
 
         UUID winner = event.getWinner();
         Location location = event.getMatch().getArena().getPosition(0);
 
-        List<Tournament> tournaments = tournamentHandler.getTournaments(DuelsWinTournament.class);
+        List<Tournament> tournaments = tournamentManager.getTournaments(DuelsWinTournament.class);
         for (Tournament tournament : tournaments) {
-            pointHandler.addPoint(winner, tournament, location.getWorld().getName(), "none", 1);
+            pointManager.addPoint(winner, tournament, location.getWorld().getName(), "none", 1);
         }
     }
 

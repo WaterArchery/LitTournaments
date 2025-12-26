@@ -1,7 +1,7 @@
 package me.waterarchery.littournaments.listeners.tournaments;
 
-import me.waterarchery.littournaments.handlers.PointHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.PointManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.ShopGuiPlusBuyTournament;
 import net.brcdev.shopgui.event.ShopPostTransactionEvent;
@@ -20,26 +20,19 @@ public class ShopGuiPlusBuyListener implements Listener {
         ShopTransactionResult result = event.getResult();
         Player player = result.getPlayer();
 
-        if (result.getShopAction() != ShopManager.ShopAction.BUY ||
-                result.getResult() != ShopTransactionResult.ShopTransactionResultType.SUCCESS) {
+        if (result.getShopAction() != ShopManager.ShopAction.BUY || result.getResult() != ShopTransactionResult.ShopTransactionResultType.SUCCESS) {
             return;
         }
 
         double pricePerItem = result.getPrice();
         int points = (int) Math.floor(pricePerItem);
 
-        PointHandler pointHandler = PointHandler.getInstance();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        List<Tournament> tournaments = tournamentHandler.getTournaments(ShopGuiPlusBuyTournament.class);
+        PointManager pointManager = PointManager.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        List<Tournament> tournaments = tournamentManager.getTournaments(ShopGuiPlusBuyTournament.class);
 
         for (Tournament tournament : tournaments) {
-            pointHandler.addPoint(
-                    player.getUniqueId(),
-                    tournament,
-                    player.getWorld().getName(),
-                    "ShopPurchase",
-                    points
-            );
+            pointManager.addPoint(player.getUniqueId(), tournament, player.getWorld().getName(), "ShopPurchase", points);
         }
     }
 }

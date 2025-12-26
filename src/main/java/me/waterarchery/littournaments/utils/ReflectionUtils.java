@@ -20,5 +20,4 @@ public class ReflectionUtils {
 
         return tournaments;
     }
-
 }

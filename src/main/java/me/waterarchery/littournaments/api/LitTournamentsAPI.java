@@ -3,6 +3,7 @@ package me.waterarchery.littournaments.api;
 import me.waterarchery.littournaments.LitTournaments;
 import me.waterarchery.littournaments.handlers.*;
 
+@SuppressWarnings("unused")
 public class LitTournamentsAPI {
 
     private static LitTournamentsAPI instance;
@@ -19,32 +20,24 @@ public class LitTournamentsAPI {
         return LitTournaments.getInstance();
     }
 
-    public CommandHandler getCommandHandler() {
-        return CommandHandler.getInstance();
+    public LoadManager getLoadHandler() {
+        return LoadManager.getInstance();
     }
 
-    public GUIHandler getGUIHandler() {
-        return GUIHandler.getInstance();
+    public PlayerManager getPlayerHandler() {
+        return PlayerManager.getInstance();
     }
 
-    public LoadHandler getLoadHandler() {
-        return LoadHandler.getInstance();
+    public TournamentManager getTournamentHandler() {
+        return TournamentManager.getInstance();
     }
 
-    public PlayerHandler getPlayerHandler() {
-        return PlayerHandler.getInstance();
+    public PointManager getPointHandler() {
+        return PointManager.getInstance();
     }
 
-    public TournamentHandler getTournamentHandler() {
-        return TournamentHandler.getInstance();
-    }
-
-    public PointHandler getPointHandler() {
-        return PointHandler.getInstance();
-    }
-
-    public ValueHandler getValueHandler() {
-        return ValueHandler.getInstance();
+    public ValueManager getValueHandler() {
+        return ValueManager.getInstance();
     }
 
 }

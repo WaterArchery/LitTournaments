@@ -3,7 +3,7 @@ package me.waterarchery.littournaments.models;
 import lombok.Getter;
 import lombok.Setter;
 import me.waterarchery.littournaments.LitTournaments;
-import me.waterarchery.littournaments.database.Database;
+import me.waterarchery.littournaments.database.TournamentDatabase;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -30,14 +30,14 @@ public class TournamentPlayer {
     }
 
     public void join(Tournament tournament) {
-        Database database = LitTournaments.getDatabase();
+        TournamentDatabase database = TournamentDatabase.getInstance();
         database.registerToTournament(uuid, tournament);
 
         tournamentValueMap.put(tournament, 0L);
     }
 
     public void leave(Tournament tournament) {
-        Database database = LitTournaments.getDatabase();
+        TournamentDatabase database = TournamentDatabase.getInstance();
         database.deleteFromTournament(uuid, tournament);
 
         tournamentValueMap.remove(tournament);

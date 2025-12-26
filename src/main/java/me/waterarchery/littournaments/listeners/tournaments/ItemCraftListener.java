@@ -1,7 +1,7 @@
 package me.waterarchery.littournaments.listeners.tournaments;
 
-import me.waterarchery.littournaments.handlers.PointHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.PointManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.ItemCraftTournament;
 import org.bukkit.World;
@@ -18,16 +18,16 @@ public class ItemCraftListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemCraft(CraftItemEvent event) {
-        PointHandler pointHandler = PointHandler.getInstance();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
+        PointManager pointManager = PointManager.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
 
         if (event.getWhoClicked() instanceof Player player) {
             ItemStack itemStack = event.getCurrentItem();
             World world = player.getWorld();
             if (itemStack == null) return;
-            List<Tournament> tournaments = tournamentHandler.getTournaments(ItemCraftTournament.class);
+            List<Tournament> tournaments = tournamentManager.getTournaments(ItemCraftTournament.class);
             for (Tournament tournament : tournaments) {
-                pointHandler.addPoint(player.getUniqueId(), tournament, world.getName(), itemStack.getType().name(), 1);
+                pointManager.addPoint(player.getUniqueId(), tournament, world.getName(), itemStack.getType().name(), 1);
             }
         }
     }

@@ -2,8 +2,8 @@ package me.waterarchery.littournaments.listeners.tournaments;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
-import me.waterarchery.littournaments.handlers.PointHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.PointManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.PlayerVoteTournament;
 import org.bukkit.Bukkit;
@@ -18,8 +18,8 @@ public class VotifierVoteListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVotifierVote(VotifierEvent event) {
-        PointHandler pointHandler = PointHandler.getInstance();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
+        PointManager pointManager = PointManager.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
         Vote vote = event.getVote();
         String playerName = vote.getUsername();
         String service = vote.getServiceName();
@@ -27,9 +27,9 @@ public class VotifierVoteListener implements Listener {
 
         if (player == null) return;
 
-        List<Tournament> tournaments = tournamentHandler.getTournaments(PlayerVoteTournament.class);
+        List<Tournament> tournaments = tournamentManager.getTournaments(PlayerVoteTournament.class);
         for (Tournament tournament : tournaments) {
-            pointHandler.addPoint(player.getUniqueId(), tournament, player.getWorld().getName(), service, 1);
+            pointManager.addPoint(player.getUniqueId(), tournament, player.getWorld().getName(), service, 1);
         }
     }
 

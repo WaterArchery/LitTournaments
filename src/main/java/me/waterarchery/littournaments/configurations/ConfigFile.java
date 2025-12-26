@@ -1,76 +1,75 @@
 package me.waterarchery.littournaments.configurations;
 
-import me.waterarchery.litlibs.LitLibs;
-import me.waterarchery.litlibs.configuration.ConfigManager;
-import me.waterarchery.litlibs.configuration.ConfigPart;
+import com.chickennw.utils.libs.config.configs.OkaeriConfig;
+import com.chickennw.utils.libs.config.configs.annotation.Comment;
+import com.chickennw.utils.libs.config.configs.annotation.NameModifier;
+import com.chickennw.utils.libs.config.configs.annotation.NameStrategy;
+import com.chickennw.utils.libs.config.configs.annotation.Names;
+import com.chickennw.utils.models.config.database.DatabaseConfiguration;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
-public class ConfigFile extends ConfigManager {
+@Getter
+@Setter
+@Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
+public class ConfigFile extends OkaeriConfig {
 
-    public ConfigFile(LitLibs litLibs, String folder, String name, boolean saveAfterLoad) {
-        super(litLibs, folder, name, saveAfterLoad);
+    private String prefix = "<#47D4FF><bold>ʟɪᴛᴛᴏᴜʀɴᴀᴍᴇɴᴛs <reset><dark_gray>»<reset>  ";
+
+    @Comment("Currently only en and tr available")
+    private String language = "en";
+
+    @Comment({"Its in seconds.", "Please don't set it under 60 seconds."})
+    private int leaderboardRefresh = 60;
+
+    @Comment({"Keep it true if this server is main server on a multi server environment.",
+            "Keep it true if is not multi server environment."})
+    private boolean mainServer = true;
+
+    @Comment("Amount of players that listed in tournament leaderboard")
+    private int leaderboardLimit = 32;
+
+    @Comment({"Its in seconds.", "Its the time between finish and start time between tournaments."})
+    private int waitTimeBetweenTournaments = 60;
+
+    @Comment({"If you set this to true, it will disable leaderboard menu opening",
+            "with right clicking tournament item in /tournament gui."})
+    private boolean disableLeaderboardWithRightClick = false;
+
+    @Comment({"You can enable Discord web hook support on", "tournament start and finish."})
+    private DiscordWebhook discordWebhook = new DiscordWebhook();
+
+    private DatabaseConfiguration database = new DatabaseConfiguration();
+
+    @Getter
+    @Setter
+    public static class DiscordWebhook extends OkaeriConfig {
+        private boolean enabled = false;
+        private String avatar = "https://i.imgur.com/VDyO5IH.jpeg";
+        private String webhookUrl = "your_url";
+        private String title = "\uD83C\uDFC6 %tournament% Tournament Results";
+        private String description = "The daily %tournament% Tournament has finished!\\n";
+        private Map<Integer, WebhookPart> parts = Map.of(
+                1, new WebhookPart("\uD83E\uDD47 1st Place", "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 1000 Game Balance\\n"),
+                2, new WebhookPart("\uD83E\uDD48 2nd Place", "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 500 Game Balance\\n"),
+                3, new WebhookPart("\uD83E\uDD49 3rd Place", "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 250 Game Balance\\n")
+        );
     }
 
-    @Override
-    public void initializeDefaults() {
-        addDefault(ConfigPart.noComment("Prefix", "<#47D4FF><bold>ʟɪᴛᴛᴏᴜʀɴᴀᴍᴇɴᴛs <reset><dark_gray>»<reset>  "));
-        addDefault(ConfigPart.of("Language", "en",
-                                 Collections.singletonList("Currently only en and tr available")));
+    @Getter
+    @Setter
+    public static class WebhookPart extends OkaeriConfig {
+        private String title;
+        private String description;
 
-        addDefault(ConfigPart.of("LeaderboardRefresh", 60, Arrays.asList(
-                "Its in seconds.",
-                "Please don't set it under 60 seconds.")));
-        addDefault(ConfigPart.of("MainServer", true, List.of(
-                "Keep it true if this server is main server on a multi server environment.",
-                "Keep it true if is not multi server environment.")));
-        addDefault(ConfigPart.of("LeaderboardLimit", 32, List.of(
-                "Amount of players that listed in tournament leaderboard"
-        )));
-        addDefault(ConfigPart.of("WaitTimeBetweenTournaments", 60, Arrays.asList(
-                "Its in seconds.",
-                "Its the time between finish and start time between tournaments."
-        )));
-        addDefault(ConfigPart.of("DisableLeaderboardWithRightClick", false, Arrays.asList(
-                "If you set this to true, it will disable leaderboard menu opening",
-                "with right clicking tournament item in /tournament gui."
-        )));
+        public WebhookPart() {
+        }
 
-        addDefault(ConfigPart.of("DiscordWebhook", null, Arrays.asList(
-                "You can enable Discord web hook support on",
-                "tournament start and finish."
-        )));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Enabled", false));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Avatar", "https://i.imgur.com/VDyO5IH.jpeg"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.WebhookURL", "your_url"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Title", "\uD83C\uDFC6 %tournament% Tournament Results"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Description", "The daily %tournament% Tournament has finished!\\n"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Parts.1.Title", "\uD83E\uDD47 1st Place"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Parts.1.Description",
-                                        "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 1000 Game Balance\\n"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Parts.2.Title", "\uD83E\uDD48 2nd Place"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Parts.2.Description",
-                                        "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 500 Game Balance\\n"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Parts.3.Title", "\uD83E\uDD49 3rd Place"));
-        addDefault(ConfigPart.noComment("DiscordWebhook.Parts.3.Description",
-                                        "**Player:** %player%\\n**Score:** %score%\\n**Rewards:** 250 Game Balance\\n"));
-
-        addDefault(ConfigPart.noComment("SoundVolume", 2));
-        addDefault(ConfigPart.of("Sounds.MenuOpen", "BLOCK_ANVIL_BREAK", Collections.singletonList("# You can set sounds \"\" to disable them.")));
-        addDefault(ConfigPart.noComment("Sounds.InvalidCommand", "ENTITY_ARROW_HIT"));
-        addDefault(ConfigPart.noComment("Sounds.NoPermission", "ENTITY_ARROW_HIT"));
-        addDefault(ConfigPart.noComment("Sounds.TournamentFinish", "BLOCK_ANVIL_BREAK"));
-        addDefault(ConfigPart.noComment("Sounds.AlreadyJoined", "ENTITY_ARROW_HIT"));
-        addDefault(ConfigPart.noComment("Sounds.SuccessfullyJoined", "BLOCK_ANVIL_BREAK"));
-
-        addDefault(ConfigPart.of("Database.DatabaseType", "sqlite", Arrays.asList("You can use these options:", "MySQL", "SQLite")));
-        addDefault(ConfigPart.noComment("Database.MySQL.host", "localhost"));
-        addDefault(ConfigPart.noComment("Database.MySQL.port", "3306"));
-        addDefault(ConfigPart.noComment("Database.MySQL.database", "db"));
-        addDefault(ConfigPart.noComment("Database.MySQL.user", "user"));
-        addDefault(ConfigPart.noComment("Database.MySQL.password", "mypassword"));
+        public WebhookPart(String title, String description) {
+            this.title = title;
+            this.description = description;
+        }
     }
-
 }

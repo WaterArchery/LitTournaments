@@ -1,0 +1,238 @@
+title: '<#47D4FF>Tournaments'
+size: 45
+open_sound: BLOCK_NOTE_BLOCK_PLING
+pattern:
+  - 'ggg---ggg'
+  - '---------'
+  - '--b-p-c--'
+  - '---------'
+  - '-m-i-k-x-'
+  - '---------'
+filler:
+  enabled: true
+  material: GRAY_STAINED_GLASS_PANE
+  name: '<dark_gray>'
+  lore: []
+items:
+  decoration_green:
+    name: '<dark_gray>'
+    material: GREEN_STAINED_GLASS_PANE
+    lore: []
+    symbol: g
+
+  close_menu:
+    name: '<red>Close Menu'
+    material: BARRIER
+    action: close
+    lore: []
+    symbol: x
+
+  block_break:
+    name: '<#47D4FF>Block Break Tournament'
+    lore:
+      - ''
+      - '<#CCFFEE>You can <#47D4FF>break blocks <#CCFFEE>to become'
+      - '<#CCFFEE>the champion of <#47D4FF>this tournament!'
+      - ''
+      - '<#47D4FF><bold>YOUR STATS'
+      - '<#47D4FF>| <#CCFFEE>Broken Blocks: <#47D4FF>%stat%'
+      - '<#47D4FF>| <#CCFFEE>Your Position: <#47D4FF>%position%'
+      - ''
+      - '<#47D4FF><bold>LEADERBOARD'
+      - '<#47D4FF>| <#ff001e>🔥 #1 <white>%leader_name_1% <dark_gray>(<#ff001e>%leader_score_formatted_1%<dark_gray>)'
+      - '<#47D4FF>| <red>🔥 #2 <white>%leader_name_2% <dark_gray>(<red>%leader_score_formatted_2%<dark_gray>)'
+      - '<#47D4FF>| <yellow>🔥 #3 <white>%leader_name_3% <dark_gray>(<yellow>%leader_score_formatted_3%<dark_gray>)'
+      - '<#47D4FF>| <#ffb700>⭐ #4 <white>%leader_name_4% <dark_gray>(<#ffb700>%leader_score_formatted_4%<dark_gray>)'
+      - '<#47D4FF>| <#47D4FF>⭐ #5 <white>%leader_name_5% <dark_gray>(<#47D4FF>%leader_score_formatted_5%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #6 <white>%leader_name_6% <dark_gray>(<dark_gray>%leader_score_formatted_6%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #7 <white>%leader_name_7% <dark_gray>(<dark_gray>%leader_score_formatted_7%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #8 <white>%leader_name_8% <dark_gray>(<dark_gray>%leader_score_formatted_8%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #9 <white>%leader_name_9% <dark_gray>(<dark_gray>%leader_score_formatted_9%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #10 <white>%leader_name_10% <dark_gray>(<dark_gray>%leader_score_formatted_10%<dark_gray>)'
+      - '<#47D4FF>|'
+      - '<#47D4FF>| <#CCFFEE>Leaderboard refreshes'
+      - '<#47D4FF>| <#CCFFEE>itself every 1 minute'
+      - ''
+      - '<#47D4FF><bold>REMAINING TIME'
+      - '<#47D4FF>| <#CCFFEE>There is <red>%remaining_time%'
+      - '<#47D4FF>| <#CCFFEE>to this tournament finish.'
+      - '<#47D4FF>'
+      - '<#47D4FF>| <green>Left Click To Join'
+      - '<#47D4FF>| <green>Right Click To View Leaderboard'
+    material: COBBLESTONE
+    symbol: b
+
+  block_place:
+    name: '<#47D4FF>Block Place Tournament'
+    lore:
+      - ''
+      - '<#CCFFEE>You can <#47D4FF>place blocks <#CCFFEE>to become'
+      - '<#CCFFEE>the champion of <#47D4FF>this tournament!'
+      - ''
+      - '<#47D4FF><bold>YOUR STATS'
+      - '<#47D4FF>| <#CCFFEE>Placed Blocks: <#47D4FF>%stat%'
+      - '<#47D4FF>| <#CCFFEE>Your Position: <#47D4FF>%position%'
+      - ''
+      - '<#47D4FF><bold>LEADERBOARD'
+      - '<#47D4FF>| <#ff001e>🔥 #1 <white>%leader_name_1% <dark_gray>(<#ff001e>%leader_score_formatted_1%<dark_gray>)'
+      - '<#47D4FF>| <red>🔥 #2 <white>%leader_name_2% <dark_gray>(<red>%leader_score_formatted_2%<dark_gray>)'
+      - '<#47D4FF>| <yellow>🔥 #3 <white>%leader_name_3% <dark_gray>(<yellow>%leader_score_formatted_3%<dark_gray>)'
+      - '<#47D4FF>| <#ffb700>⭐ #4 <white>%leader_name_4% <dark_gray>(<#ffb700>%leader_score_formatted_4%<dark_gray>)'
+      - '<#47D4FF>| <#47D4FF>⭐ #5 <white>%leader_name_5% <dark_gray>(<#47D4FF>%leader_score_formatted_5%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #6 <white>%leader_name_6% <dark_gray>(<dark_gray>%leader_score_formatted_6%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #7 <white>%leader_name_7% <dark_gray>(<dark_gray>%leader_score_formatted_7%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #8 <white>%leader_name_8% <dark_gray>(<dark_gray>%leader_score_formatted_8%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #9 <white>%leader_name_9% <dark_gray>(<dark_gray>%leader_score_formatted_9%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #10 <white>%leader_name_10% <dark_gray>(<dark_gray>%leader_score_formatted_10%<dark_gray>)'
+      - '<#47D4FF>|'
+      - '<#47D4FF>| <#CCFFEE>Leaderboard refreshes'
+      - '<#47D4FF>| <#CCFFEE>itself every 1 minute'
+      - ''
+      - '<#47D4FF><bold>REMAINING TIME'
+      - '<#47D4FF>| <#CCFFEE>There is <red>%remaining_time%'
+      - '<#47D4FF>| <#CCFFEE>to this tournament finish.'
+      - '<#47D4FF>'
+      - '<#47D4FF>| <green>Left Click To Join'
+      - '<#47D4FF>| <green>Right Click To View Leaderboard'
+    material: OAK_LOG
+    symbol: p
+
+  item_craft:
+    name: '<#47D4FF>Craft Item Tournament'
+    lore:
+      - ''
+      - '<#CCFFEE>You can <#47D4FF>craft items <#CCFFEE>to become'
+      - '<#CCFFEE>the champion of <#47D4FF>this tournament!'
+      - ''
+      - '<#47D4FF><bold>YOUR STATS'
+      - '<#47D4FF>| <#CCFFEE>Crafted Items: <#47D4FF>%stat%'
+      - '<#47D4FF>| <#CCFFEE>Your Position: <#47D4FF>%position%'
+      - ''
+      - '<#47D4FF><bold>LEADERBOARD'
+      - '<#47D4FF>| <#ff001e>🔥 #1 <white>%leader_name_1% <dark_gray>(<#ff001e>%leader_score_formatted_1%<dark_gray>)'
+      - '<#47D4FF>| <red>🔥 #2 <white>%leader_name_2% <dark_gray>(<red>%leader_score_formatted_2%<dark_gray>)'
+      - '<#47D4FF>| <yellow>🔥 #3 <white>%leader_name_3% <dark_gray>(<yellow>%leader_score_formatted_3%<dark_gray>)'
+      - '<#47D4FF>| <#ffb700>⭐ #4 <white>%leader_name_4% <dark_gray>(<#ffb700>%leader_score_formatted_4%<dark_gray>)'
+      - '<#47D4FF>| <#47D4FF>⭐ #5 <white>%leader_name_5% <dark_gray>(<#47D4FF>%leader_score_formatted_5%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #6 <white>%leader_name_6% <dark_gray>(<dark_gray>%leader_score_formatted_6%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #7 <white>%leader_name_7% <dark_gray>(<dark_gray>%leader_score_formatted_7%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #8 <white>%leader_name_8% <dark_gray>(<dark_gray>%leader_score_formatted_8%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #9 <white>%leader_name_9% <dark_gray>(<dark_gray>%leader_score_formatted_9%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #10 <white>%leader_name_10% <dark_gray>(<dark_gray>%leader_score_formatted_10%<dark_gray>)'
+      - '<#47D4FF>|'
+      - '<#47D4FF>| <#CCFFEE>Leaderboard refreshes'
+      - '<#47D4FF>| <#CCFFEE>itself every 1 minute'
+      - ''
+      - '<#47D4FF><bold>REMAINING TIME'
+      - '<#47D4FF>| <#CCFFEE>There is <red>%remaining_time%'
+      - '<#47D4FF>| <#CCFFEE>to this tournament finish.'
+      - '<#47D4FF>'
+      - '<#47D4FF>| <green>Left Click To Join'
+      - '<#47D4FF>| <green>Right Click To View Leaderboard'
+    material: CRAFTING_TABLE
+    symbol: c
+
+  mob_kill:
+    name: '<#47D4FF>Mob Kill Tournament'
+    lore:
+      - ''
+      - '<#CCFFEE>You can <#47D4FF>kill mobs <#CCFFEE>to become'
+      - '<#CCFFEE>the champion of <#47D4FF>this tournament!'
+      - ''
+      - '<#47D4FF><bold>YOUR STATS'
+      - '<#47D4FF>| <#CCFFEE>Killed Mobs: <#47D4FF>%stat%'
+      - '<#47D4FF>| <#CCFFEE>Your Position: <#47D4FF>%position%'
+      - ''
+      - '<#47D4FF><bold>LEADERBOARD'
+      - '<#47D4FF>| <#ff001e>🔥 #1 <white>%leader_name_1% <dark_gray>(<#ff001e>%leader_score_formatted_1%<dark_gray>)'
+      - '<#47D4FF>| <red>🔥 #2 <white>%leader_name_2% <dark_gray>(<red>%leader_score_formatted_2%<dark_gray>)'
+      - '<#47D4FF>| <yellow>🔥 #3 <white>%leader_name_3% <dark_gray>(<yellow>%leader_score_formatted_3%<dark_gray>)'
+      - '<#47D4FF>| <#ffb700>⭐ #4 <white>%leader_name_4% <dark_gray>(<#ffb700>%leader_score_formatted_4%<dark_gray>)'
+      - '<#47D4FF>| <#47D4FF>⭐ #5 <white>%leader_name_5% <dark_gray>(<#47D4FF>%leader_score_formatted_5%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #6 <white>%leader_name_6% <dark_gray>(<dark_gray>%leader_score_formatted_6%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #7 <white>%leader_name_7% <dark_gray>(<dark_gray>%leader_score_formatted_7%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #8 <white>%leader_name_8% <dark_gray>(<dark_gray>%leader_score_formatted_8%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #9 <white>%leader_name_9% <dark_gray>(<dark_gray>%leader_score_formatted_9%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #10 <white>%leader_name_10% <dark_gray>(<dark_gray>%leader_score_formatted_10%<dark_gray>)'
+      - '<#47D4FF>|'
+      - '<#47D4FF>| <#CCFFEE>Leaderboard refreshes'
+      - '<#47D4FF>| <#CCFFEE>itself every 1 minute'
+      - ''
+      - '<#47D4FF><bold>REMAINING TIME'
+      - '<#47D4FF>| <#CCFFEE>There is <red>%remaining_time%'
+      - '<#47D4FF>| <#CCFFEE>to this tournament finish.'
+      - '<#47D4FF>'
+      - '<#47D4FF>| <green>Left Click To Join'
+      - '<#47D4FF>| <green>Right Click To View Leaderboard'
+    material: DIAMOND_SWORD
+    symbol: m
+
+  item_break:
+    name: '<#47D4FF>Item Break Tournament'
+    lore:
+      - ''
+      - '<#CCFFEE>You can <#47D4FF>break your items <#CCFFEE>to become'
+      - '<#CCFFEE>the champion of <#47D4FF>this tournament!'
+      - ''
+      - '<#47D4FF><bold>YOUR STATS'
+      - '<#47D4FF>| <#CCFFEE>Broken Items: <#47D4FF>%stat%'
+      - '<#47D4FF>| <#CCFFEE>Your Position: <#47D4FF>%position%'
+      - ''
+      - '<#47D4FF><bold>LEADERBOARD'
+      - '<#47D4FF>| <#ff001e>🔥 #1 <white>%leader_name_1% <dark_gray>(<#ff001e>%leader_score_formatted_1%<dark_gray>)'
+      - '<#47D4FF>| <red>🔥 #2 <white>%leader_name_2% <dark_gray>(<red>%leader_score_formatted_2%<dark_gray>)'
+      - '<#47D4FF>| <yellow>🔥 #3 <white>%leader_name_3% <dark_gray>(<yellow>%leader_score_formatted_3%<dark_gray>)'
+      - '<#47D4FF>| <#ffb700>⭐ #4 <white>%leader_name_4% <dark_gray>(<#ffb700>%leader_score_formatted_4%<dark_gray>)'
+      - '<#47D4FF>| <#47D4FF>⭐ #5 <white>%leader_name_5% <dark_gray>(<#47D4FF>%leader_score_formatted_5%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #6 <white>%leader_name_6% <dark_gray>(<dark_gray>%leader_score_formatted_6%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #7 <white>%leader_name_7% <dark_gray>(<dark_gray>%leader_score_formatted_7%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #8 <white>%leader_name_8% <dark_gray>(<dark_gray>%leader_score_formatted_8%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #9 <white>%leader_name_9% <dark_gray>(<dark_gray>%leader_score_formatted_9%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #10 <white>%leader_name_10% <dark_gray>(<dark_gray>%leader_score_formatted_10%<dark_gray>)'
+      - '<#47D4FF>|'
+      - '<#47D4FF>| <#CCFFEE>Leaderboard refreshes'
+      - '<#47D4FF>| <#CCFFEE>itself every 1 minute'
+      - ''
+      - '<#47D4FF><bold>REMAINING TIME'
+      - '<#47D4FF>| <#CCFFEE>There is <red>%remaining_time%'
+      - '<#47D4FF>| <#CCFFEE>to this tournament finish.'
+      - '<#47D4FF>'
+      - '<#47D4FF>| <green>Left Click To Join'
+      - '<#47D4FF>| <green>Right Click To View Leaderboard'
+    material: ANVIL
+    symbol: i
+
+  player_kill:
+    name: '<#47D4FF>Player Kill Tournament'
+    lore:
+      - ''
+      - '<#CCFFEE>You can <#47D4FF>kill players <#CCFFEE>to become'
+      - '<#CCFFEE>the champion of <#47D4FF>this tournament!'
+      - ''
+      - '<#47D4FF><bold>YOUR STATS'
+      - '<#47D4FF>| <#CCFFEE>Killed Players: <#47D4FF>%stat%'
+      - '<#47D4FF>| <#CCFFEE>Your Position: <#47D4FF>%position%'
+      - ''
+      - '<#47D4FF><bold>LEADERBOARD'
+      - '<#47D4FF>| <#ff001e>🔥 #1 <white>%leader_name_1% <dark_gray>(<#ff001e>%leader_score_formatted_1%<dark_gray>)'
+      - '<#47D4FF>| <red>🔥 #2 <white>%leader_name_2% <dark_gray>(<red>%leader_score_formatted_2%<dark_gray>)'
+      - '<#47D4FF>| <yellow>🔥 #3 <white>%leader_name_3% <dark_gray>(<yellow>%leader_score_formatted_3%<dark_gray>)'
+      - '<#47D4FF>| <#ffb700>⭐ #4 <white>%leader_name_4% <dark_gray>(<#ffb700>%leader_score_formatted_4%<dark_gray>)'
+      - '<#47D4FF>| <#47D4FF>⭐ #5 <white>%leader_name_5% <dark_gray>(<#47D4FF>%leader_score_formatted_5%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #6 <white>%leader_name_6% <dark_gray>(<dark_gray>%leader_score_formatted_6%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #7 <white>%leader_name_7% <dark_gray>(<dark_gray>%leader_score_formatted_7%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #8 <white>%leader_name_8% <dark_gray>(<dark_gray>%leader_score_formatted_8%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #9 <white>%leader_name_9% <dark_gray>(<dark_gray>%leader_score_formatted_9%<dark_gray>)'
+      - '<#47D4FF>| <dark_gray>   #10 <white>%leader_name_10% <dark_gray>(<dark_gray>%leader_score_formatted_10%<dark_gray>)'
+      - '<#47D4FF>|'
+      - '<#47D4FF>| <#CCFFEE>Leaderboard refreshes'
+      - '<#47D4FF>| <#CCFFEE>itself every 1 minute'
+      - ''
+      - '<#47D4FF><bold>REMAINING TIME'
+      - '<#47D4FF>| <#CCFFEE>There is <red>%remaining_time%'
+      - '<#47D4FF>| <#CCFFEE>to this tournament finish.'
+      - '<#47D4FF>'
+      - '<#47D4FF>| <green>Left Click To Join'
+      - '<#47D4FF>| <green>Right Click To View Leaderboard'
+    material: SHIELD
+    symbol: k

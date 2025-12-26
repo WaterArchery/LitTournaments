@@ -1,50 +1,36 @@
 package me.waterarchery.littournaments;
 
-import com.tcoded.folialib.FoliaLib;
-import lombok.Getter;
-import lombok.Setter;
-import me.waterarchery.litlibs.LitLibs;
-import me.waterarchery.litlibs.logger.Logger;
-import me.waterarchery.littournaments.database.Database;
-import me.waterarchery.littournaments.handlers.CommandHandler;
-import me.waterarchery.littournaments.handlers.LoadHandler;
+import com.chickennw.utils.ChickenUtils;
+import com.chickennw.utils.logger.LoggerFactory;
+import com.chickennw.utils.managers.CommandManager;
+import me.waterarchery.littournaments.database.TournamentDatabase;
+import me.waterarchery.littournaments.handlers.LoadManager;
 import me.waterarchery.littournaments.hooks.PlaceholderAPIHook;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.Logger;
 
 public final class LitTournaments extends JavaPlugin {
 
-    @Getter
-    private static LitLibs litLibs;
-    @Getter
-    @Setter
-    private static Database database;
-    @Getter
-    private static FoliaLib foliaLib;
+    private final Logger logger = LoggerFactory.getLogger();
 
     @Override
     public void onEnable() {
-        litLibs = LitLibs.of(this);
-        foliaLib = new FoliaLib(this);
-        Logger logger = litLibs.getLogger();
-        LoadHandler loadHandler = LoadHandler.getInstance();
-        loadHandler.load();
-        logger.log("LitTournaments enabled <#47D4FF>v" + getDescription().getVersion());
+        ChickenUtils.setPlugin(this);
+        LoadManager loadManager = LoadManager.getInstance();
+        loadManager.load();
+        logger.info("LitTournaments enabled <#47D4FF>v{}", getDescription().getVersion());
     }
 
     @Override
     public void onDisable() {
-        Logger logger = litLibs.getLogger();
+        CommandManager.getInstance().unregisterCommands();
+        TournamentDatabase.getInstance().shutdownPool();
 
-        CommandHandler commandHandler = CommandHandler.getInstance();
-        commandHandler.unRegisterCommands();
-
-        database.shutdownPool();
-
-        LoadHandler loadHandler = LoadHandler.getInstance();
-        PlaceholderAPIHook placeholderAPIHook = loadHandler.getPlaceholderAPIHook();
+        LoadManager loadManager = LoadManager.getInstance();
+        PlaceholderAPIHook placeholderAPIHook = loadManager.getPlaceholderAPIHook();
         if (placeholderAPIHook != null) placeholderAPIHook.unRegister();
 
-        logger.log("Good bye :(");
+        logger.info("Good bye :(");
     }
 
     public static LitTournaments getInstance() {

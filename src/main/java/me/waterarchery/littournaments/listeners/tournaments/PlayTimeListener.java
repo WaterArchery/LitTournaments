@@ -1,10 +1,11 @@
 package me.waterarchery.littournaments.listeners.tournaments;
 
-import com.tcoded.folialib.wrapper.task.WrappedTask;
+import com.chickennw.utils.ChickenUtils;
+import com.chickennw.utils.libs.folia.wrapper.task.WrappedTask;
 import lombok.Getter;
 import me.waterarchery.littournaments.LitTournaments;
-import me.waterarchery.littournaments.handlers.PointHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.PointManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.PlayTimeTournament;
 import org.bukkit.Bukkit;
@@ -25,16 +26,16 @@ public class PlayTimeListener {
     }
 
     private PlayTimeListener() {
-        PointHandler pointHandler = PointHandler.getInstance();
-        task = LitTournaments.getFoliaLib().getScheduler().runTimerAsync(() -> {
-            TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-            List<Tournament> tournaments = tournamentHandler.getTournaments(PlayTimeTournament.class);
+        PointManager pointManager = PointManager.getInstance();
+        task = ChickenUtils.getFoliaLib().getScheduler().runTimerAsync(() -> {
+            TournamentManager tournamentManager = TournamentManager.getInstance();
+            List<Tournament> tournaments = tournamentManager.getTournaments(PlayTimeTournament.class);
 
             for (Tournament tournament : tournaments) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     World world = player.getWorld();
-                    LitTournaments.getFoliaLib().getScheduler().runNextTick((task) -> {
-                        pointHandler.addPoint(player.getUniqueId(), tournament, world.getName(), "none", 1);
+                    ChickenUtils.getFoliaLib().getScheduler().runNextTick((task) -> {
+                        pointManager.addPoint(player.getUniqueId(), tournament, world.getName(), "none", 1);
                     });
                 }
             }

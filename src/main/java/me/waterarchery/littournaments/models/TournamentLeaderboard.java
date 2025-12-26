@@ -1,9 +1,10 @@
 package me.waterarchery.littournaments.models;
 
-import com.tcoded.folialib.wrapper.task.WrappedTask;
+import com.chickennw.utils.ChickenUtils;
+import com.chickennw.utils.libs.folia.wrapper.task.WrappedTask;
 import lombok.Getter;
 import me.waterarchery.littournaments.LitTournaments;
-import me.waterarchery.littournaments.database.Database;
+import me.waterarchery.littournaments.database.TournamentDatabase;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -39,8 +40,8 @@ public class TournamentLeaderboard {
         LitTournaments instance = LitTournaments.getInstance();
         long taskInterval = instance.getConfig().getLong("LeaderboardRefresh") * 20L;
 
-        refreshTask = LitTournaments.getFoliaLib().getScheduler().runTimerAsync(() -> {
-            Database database = LitTournaments.getDatabase();
+        refreshTask = ChickenUtils.getFoliaLib().getScheduler().runTimerAsync(() -> {
+            TournamentDatabase database = TournamentDatabase.getInstance();
             database.reloadLeaderboard(tournament);
         }, taskInterval, taskInterval);
     }
@@ -53,5 +54,4 @@ public class TournamentLeaderboard {
     public void clear() {
         leaderboard.clear();
     }
-
 }

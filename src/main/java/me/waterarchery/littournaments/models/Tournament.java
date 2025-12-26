@@ -1,15 +1,17 @@
 package me.waterarchery.littournaments.models;
 
 
-import com.tcoded.folialib.wrapper.task.WrappedTask;
+import com.chickennw.utils.ChickenUtils;
+import com.chickennw.utils.libs.folia.wrapper.task.WrappedTask;
+import com.chickennw.utils.utils.ConfigUtils;
 import lombok.Getter;
 import me.waterarchery.littournaments.LitTournaments;
 import me.waterarchery.littournaments.api.events.TournamentEndEvent;
 import me.waterarchery.littournaments.api.events.TournamentStartEvent;
-import me.waterarchery.littournaments.database.Database;
-import me.waterarchery.littournaments.handlers.FileHandler;
-import me.waterarchery.littournaments.handlers.PlayerHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.configurations.ConfigFile;
+import me.waterarchery.littournaments.database.TournamentDatabase;
+import me.waterarchery.littournaments.handlers.PlayerManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.handlers.WebhookHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -52,8 +54,7 @@ public class Tournament {
         actionChecker = new ActionChecker(yamlConfiguration, this);
         leaderboard = new TournamentLeaderboard(this);
 
-        if (isActive)
-            startFinishTask();
+        if (isActive) startFinishTask();
     }
 
     public boolean checkWorldEnabled(String worldName) {
@@ -110,7 +111,7 @@ public class Tournament {
         Duration remaining = Duration.between(now, finishTime);
         long inTicks = remaining.getSeconds() * 20L;
 
-        finishTask = LitTournaments.getFoliaLib().getScheduler().runLater(this::finishTournament, inTicks);
+        finishTask = ChickenUtils.getFoliaLib().getScheduler().runLater(this::finishTournament, inTicks);
     }
 
     public void stopFinishTask() {
@@ -119,24 +120,26 @@ public class Tournament {
 
     public void finishTournament() {
         Tournament tournament = this;
-        Database database = LitTournaments.getDatabase();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        PlayerHandler playerHandler = PlayerHandler.getInstance();
-        tournamentHandler.parseConditionalCommand(tournament, "TOURNAMENT_END");
+        TournamentDatabase database = TournamentDatabase.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        PlayerManager playerManager = PlayerManager.getInstance();
+        tournamentManager.parseConditionalCommand(tournament, "TOURNAMENT_END");
 
         TournamentEndEvent tournamentEndEvent = new TournamentEndEvent(tournament);
         Bukkit.getPluginManager().callEvent(tournamentEndEvent);
         WebhookHandler.sendWebhook(tournament);
-        int waitTime = FileHandler.getConfig().getYml().getInt("WaitTimeBetweenTournaments");
+
+        ConfigFile configFile = ConfigUtils.get(ConfigFile.class);
+        int waitTime = configFile.getWaitTimeBetweenTournaments();
 
         CompletableFuture.runAsync(database.getReloadTournamentRunnable(tournament)).thenRun(() -> {
             boolean mainServer = LitTournaments.getInstance().getConfig().getBoolean("MainServer");
             if (!mainServer) return;
 
             if (shouldRestartAfterFinished) {
-                tournamentHandler.parseRewards(tournament);
+                tournamentManager.parseRewards(tournament);
                 database.clearTournament(tournament);
-                playerHandler.clearPlayerValues(tournament);
+                playerManager.clearPlayerValues(tournament);
                 getLeaderboard().clear();
                 stopFinishTask();
                 return;
@@ -151,28 +154,28 @@ public class Tournament {
             }
 
             isActive = false;
-            tournamentHandler.parseRewards(tournament);
+            tournamentManager.parseRewards(tournament);
             stopFinishTask();
         }).thenRun(() -> {
             if (!shouldRestartAfterFinished) return;
 
-            LitTournaments.getFoliaLib().getScheduler().runLater(this::startTournament, waitTime * 20L);
+            ChickenUtils.getFoliaLib().getScheduler().runLater(this::startTournament, waitTime * 20L);
         });
     }
 
     public void startTournament() {
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        Database database = LitTournaments.getDatabase();
-        PlayerHandler playerHandler = PlayerHandler.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        TournamentDatabase database = TournamentDatabase.getInstance();
+        PlayerManager playerManager = PlayerManager.getInstance();
 
         startFinishTask();
         database.clearTournament(this);
-        playerHandler.clearPlayerValues(this);
+        playerManager.clearPlayerValues(this);
         getLeaderboard().clear();
 
         TournamentStartEvent tournamentStartEvent = new TournamentStartEvent(this);
         Bukkit.getPluginManager().callEvent(tournamentStartEvent);
-        tournamentHandler.parseConditionalCommand(this, "TOURNAMENT_START");
+        tournamentManager.parseConditionalCommand(this, "TOURNAMENT_START");
         isActive = true;
 
         File file = new File(LitTournaments.getInstance().getDataFolder(), "/tournaments/" + identifier + ".yml");

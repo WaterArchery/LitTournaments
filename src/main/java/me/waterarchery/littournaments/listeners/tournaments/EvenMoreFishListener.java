@@ -1,8 +1,8 @@
 package me.waterarchery.littournaments.listeners.tournaments;
 
 import com.oheers.fish.api.EMFFishEvent;
-import me.waterarchery.littournaments.handlers.PointHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.PointManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.EvenMoreFishTournament;
 import org.bukkit.World;
@@ -17,15 +17,15 @@ public class EvenMoreFishListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFish(EMFFishEvent event) {
-        PointHandler pointHandler = PointHandler.getInstance();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
+        PointManager pointManager = PointManager.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
         Player player = event.getPlayer();
         World world = player.getWorld();
         String name = event.getFish().getName();
 
-        List<Tournament> tournaments = tournamentHandler.getTournaments(EvenMoreFishTournament.class);
+        List<Tournament> tournaments = tournamentManager.getTournaments(EvenMoreFishTournament.class);
         for (Tournament tournament : tournaments) {
-            pointHandler.addPoint(player.getUniqueId(), tournament, world.getName(), name, 1);
+            pointManager.addPoint(player.getUniqueId(), tournament, world.getName(), name, 1);
         }
     }
 

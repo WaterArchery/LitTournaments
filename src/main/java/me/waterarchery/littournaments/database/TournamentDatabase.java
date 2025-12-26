@@ -1,41 +1,36 @@
 package me.waterarchery.littournaments.database;
 
-import me.waterarchery.litlibs.LitLibs;
+import com.chickennw.utils.database.sql.Database;
+import com.chickennw.utils.models.config.database.DatabaseConfiguration;
+import com.chickennw.utils.utils.ConfigUtils;
 import me.waterarchery.littournaments.LitTournaments;
+import me.waterarchery.littournaments.configurations.ConfigFile;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentLeaderboard;
 import me.waterarchery.littournaments.models.TournamentValue;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-public abstract class Database {
+public class TournamentDatabase extends Database {
 
-    protected final LitTournaments instance;
-    private final ExecutorService threadPool;
+    private static TournamentDatabase instance;
 
-    public String createTableToken = "CREATE TABLE IF NOT EXISTS {{TOURNAMENT_NAME}} (" +
-            "`player` varchar(36) NOT NULL PRIMARY KEY," +
-            "`score` int(11) NOT NULL" +
-            ");";
+    public static TournamentDatabase getInstance() {
+        if (instance == null) {
+            ConfigFile configFile = ConfigUtils.get(ConfigFile.class);
+            instance = new TournamentDatabase(LitTournaments.getInstance(), configFile.getDatabase());
+        }
 
-    public Database(LitTournaments instance) {
-        this.instance = instance;
-        ThreadFactory factory = Thread.ofVirtual()
-                .name("littournaments-database-worker-", 0)
-                .uncaughtExceptionHandler((thread, throwable) -> throwable.printStackTrace())
-                .factory();
-        threadPool = Executors.newFixedThreadPool(10, factory);
+        return instance;
     }
 
-    public abstract Connection getSQLConnection();
-
-    public abstract void initialize();
+    private TournamentDatabase(JavaPlugin plugin, DatabaseConfiguration config) {
+        super(plugin, config);
+    }
 
     public void load(List<Tournament> tournaments) {
         try (Connection connection = getSQLConnection()) {
@@ -59,8 +54,8 @@ public abstract class Database {
 
     public void addPoint(UUID uuid, Tournament tournament, long point) {
         Runnable runnable = () -> {
-            String query = String.format("INSERT INTO %s (player, score) VALUES(?, ?) " +
-                                                 "ON DUPLICATE KEY UPDATE score = score + ?;", tournament.getIdentifier());
+            String query = String.format("INSERT INTO %s (player, score) VALUES(?, ?) " + "ON DUPLICATE KEY UPDATE score = score + ?;",
+                    tournament.getIdentifier());
 
             try (Connection connection = getSQLConnection()) {
                 PreparedStatement stmt = connection.prepareStatement(query);
@@ -103,10 +98,8 @@ public abstract class Database {
             stmt.setString(1, uuid.toString());
 
             ResultSet rs = stmt.executeQuery();
-            if (rs.next())
-                return rs.getLong("score");
-            else
-                return -9999;
+            if (rs.next()) return rs.getLong("score");
+            else return -9999;
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
@@ -189,18 +182,4 @@ public abstract class Database {
 
         threadPool.submit(runnable);
     }
-
-    public void shutdownPool() {
-        try {
-            LitLibs libs = LitTournaments.getLitLibs();
-            libs.getLogger().log("Shutting down thread pool");
-            threadPool.shutdownNow();
-            boolean closed = threadPool.awaitTermination(20, TimeUnit.SECONDS);
-            if (!closed)
-                libs.getLogger().error("Shutting down thread pool failed");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

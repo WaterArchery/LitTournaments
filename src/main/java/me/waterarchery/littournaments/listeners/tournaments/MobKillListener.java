@@ -1,7 +1,7 @@
 package me.waterarchery.littournaments.listeners.tournaments;
 
-import me.waterarchery.littournaments.handlers.PointHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.PointManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.MobKillTournament;
 import org.bukkit.World;
@@ -19,8 +19,8 @@ public class MobKillListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMobKill(EntityDeathEvent event) {
-        PointHandler pointHandler = PointHandler.getInstance();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
+        PointManager pointManager = PointManager.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
         Entity victim = event.getEntity();
         EntityDamageEvent damageEvent = victim.getLastDamageCause();
         World world = victim.getWorld();
@@ -30,9 +30,9 @@ public class MobKillListener implements Listener {
         Player player = event.getEntity().getKiller();
         if (player == null) return;
 
-        List<Tournament> tournaments = tournamentHandler.getTournaments(MobKillTournament.class);
+        List<Tournament> tournaments = tournamentManager.getTournaments(MobKillTournament.class);
         for (Tournament tournament : tournaments) {
-            pointHandler.addPoint(player.getUniqueId(), tournament, world.getName(), victim.getType().name(), 1);
+            pointManager.addPoint(player.getUniqueId(), tournament, world.getName(), victim.getType().name(), 1);
         }
     }
 

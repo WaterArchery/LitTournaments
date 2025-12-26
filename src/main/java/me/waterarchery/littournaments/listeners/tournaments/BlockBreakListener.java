@@ -1,7 +1,7 @@
 package me.waterarchery.littournaments.listeners.tournaments;
 
-import me.waterarchery.littournaments.handlers.PointHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
+import me.waterarchery.littournaments.handlers.PointManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.BlockBreakTournament;
 import org.bukkit.World;
@@ -18,15 +18,15 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        PointHandler pointHandler = PointHandler.getInstance();
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
+        PointManager pointManager = PointManager.getInstance();
+        TournamentManager tournamentManager = TournamentManager.getInstance();
         Player player = event.getPlayer();
         Block block = event.getBlock();
         World world = block.getWorld();
 
-        List<Tournament> tournaments = tournamentHandler.getTournaments(BlockBreakTournament.class);
+        List<Tournament> tournaments = tournamentManager.getTournaments(BlockBreakTournament.class);
         for (Tournament tournament : tournaments) {
-            pointHandler.addPoint(player.getUniqueId(), tournament, world.getName(), block.getType().name(), 1);
+            pointManager.addPoint(player.getUniqueId(), tournament, world.getName(), block.getType().name(), 1);
         }
     }
 

@@ -1,7 +1,7 @@
 package me.waterarchery.littournaments.handlers;
 
-import me.waterarchery.litlibs.LitLibs;
-import me.waterarchery.littournaments.LitTournaments;
+import com.chickennw.utils.utils.ConfigUtils;
+import me.waterarchery.littournaments.configurations.LangFile;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentLeaderboard;
 import me.waterarchery.littournaments.models.TournamentPlayer;
@@ -9,29 +9,29 @@ import me.waterarchery.littournaments.models.TournamentValue;
 
 import java.time.Duration;
 
-public class ValueHandler {
+public class ValueManager {
 
-    private static ValueHandler instance;
+    private static ValueManager instance;
 
-    public static ValueHandler getInstance() {
-        if (instance == null) instance = new ValueHandler();
+    public static ValueManager getInstance() {
+        if (instance == null) instance = new ValueManager();
         return instance;
     }
 
-    private ValueHandler() {
+    private ValueManager() {
     }
 
     public String getPlayerScore(TournamentPlayer tournamentPlayer, Tournament tournament) {
-        if (tournamentPlayer.isRegistered(tournament)) return tournamentPlayer.getTournamentValueMap().get(tournament) + "";
+        if (tournamentPlayer.isRegistered(tournament)) return String.valueOf(tournamentPlayer.getTournamentValueMap().get(tournament));
 
-        return 0 + "";
+        return String.valueOf(0);
     }
 
     public String getPlayerPosition(TournamentPlayer tournamentPlayer, Tournament tournament) {
-        if (tournamentPlayer.isRegistered(tournament)) return tournament.getLeaderboard().getPlayerPos(tournamentPlayer) + "";
+        if (tournamentPlayer.isRegistered(tournament)) return String.valueOf(tournament.getLeaderboard().getPlayerPos(tournamentPlayer));
 
-        LitLibs libs = LitTournaments.getLitLibs();
-        return libs.getMessageHandler().getLangMessage("Placeholders.NotRegistered");
+        LangFile langFile = ConfigUtils.get(LangFile.class);
+        return langFile.getPlaceholders().getNotRegistered();
     }
 
     public String getPlayerNameWithPosition(int position, Tournament tournament) {
@@ -40,8 +40,8 @@ public class ValueHandler {
 
         if (value != null) return value.getName();
 
-        LitLibs libs = LitTournaments.getLitLibs();
-        return libs.getMessageHandler().getLangMessage("Placeholders.None");
+        LangFile langFile = ConfigUtils.get(LangFile.class);
+        return langFile.getPlaceholders().getNone();
     }
 
     public long getPlayerScoreWithPosition(int position, Tournament tournament) {
@@ -54,18 +54,16 @@ public class ValueHandler {
     }
 
     public String getRemainingTime(Tournament tournament) {
-        LitLibs libs = LitTournaments.getLitLibs();
-
+        LangFile langFile = ConfigUtils.get(LangFile.class);
         if (!tournament.isActive()) {
-            return libs.getMessageHandler().getLangMessage("Placeholders.NotActive");
+            return langFile.getPlaceholders().getNotActive();
         }
 
-        String remainingTime = libs.getMessageHandler().getLangMessage("Placeholders.RemainingTime");
+        String remainingTime = langFile.getPlaceholders().getRemainingTime();
         Duration remaining = tournament.getRemainingTime();
 
         return remainingTime.replace("%day%", remaining.toDaysPart() + "")
                 .replace("%hour%", remaining.toHoursPart() + "")
                 .replace("%minute%", remaining.toMinutesPart() + "");
     }
-
 }

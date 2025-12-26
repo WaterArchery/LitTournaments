@@ -1,43 +1,46 @@
 package me.waterarchery.littournaments.handlers;
 
+import com.chickennw.utils.logger.LoggerFactory;
+import com.chickennw.utils.utils.ChatUtils;
+import com.chickennw.utils.utils.ConfigUtils;
 import lombok.Getter;
-import me.waterarchery.litlibs.LitLibs;
-import me.waterarchery.littournaments.LitTournaments;
-import me.waterarchery.littournaments.database.Database;
+import me.waterarchery.littournaments.configurations.LangFile;
+import me.waterarchery.littournaments.database.TournamentDatabase;
 import me.waterarchery.littournaments.models.JoinChecker;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.slf4j.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 
 @Getter
-public class PlayerHandler {
+public class PlayerManager {
 
-    private static PlayerHandler instance;
+    private static PlayerManager instance;
+    private final ConcurrentHashMap<UUID, TournamentPlayer> players = new ConcurrentHashMap<>();
+    private final Logger logger = LoggerFactory.getLogger();
     private final ExecutorService executor;
-    private final List<TournamentPlayer> players = new ArrayList<>();
 
-    public static PlayerHandler getInstance() {
-        if (instance == null) instance = new PlayerHandler();
+    public static PlayerManager getInstance() {
+        if (instance == null) instance = new PlayerManager();
         return instance;
     }
 
-    private PlayerHandler() {
+    private PlayerManager() {
         ThreadFactory factory = Thread.ofVirtual()
-                .name("tournaments-database-worker-", 0)
-                .uncaughtExceptionHandler((thread, throwable) -> throwable.printStackTrace())
+                .name("tournaments-player-worker-", 0)
+                .uncaughtExceptionHandler((thread, throwable) -> logger.error(throwable.getMessage(), throwable))
                 .factory();
         executor = Executors.newThreadPerTaskExecutor(factory);
     }
 
     public TournamentPlayer getPlayer(UUID uuid) {
-        for (TournamentPlayer tournamentPlayer : players) {
+        for (TournamentPlayer tournamentPlayer : players.values()) {
             if (tournamentPlayer.getUUID().equals(uuid)) return tournamentPlayer;
         }
 
@@ -48,7 +51,7 @@ public class PlayerHandler {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getUniqueId().equals(uuid)) {
                 TournamentPlayer tournamentPlayer = new TournamentPlayer(uuid);
-                players.add(tournamentPlayer);
+                players.put(tournamentPlayer.getUUID(), tournamentPlayer);
                 initializePlayer(tournamentPlayer, false);
                 return tournamentPlayer;
             }
@@ -58,22 +61,19 @@ public class PlayerHandler {
     }
 
     public void clearPlayerValues(Tournament tournament) {
-        for (TournamentPlayer player : players) {
-            if (player.getTournamentValueMap().get(tournament) != null)
-                player.getTournamentValueMap().replace(tournament, 0L);
+        for (TournamentPlayer player : players.values()) {
+            if (player.getTournamentValueMap().get(tournament) != null) player.getTournamentValueMap().replace(tournament, 0L);
         }
     }
 
     public void initializePlayer(TournamentPlayer player, boolean isJoinNow) {
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        List<Tournament> tournaments = tournamentHandler.getTournaments();
-        Database database = LitTournaments.getDatabase();
-
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        List<Tournament> tournaments = tournamentManager.getTournaments();
+        TournamentDatabase database = TournamentDatabase.getInstance();
         player.setLoading(true);
 
         CompletableFuture.supplyAsync(() -> {
             HashMap<Tournament, Long> pointMap = new HashMap<>();
-            LitLibs libs = LitTournaments.getLitLibs();
             Player bukkitPlayer = Bukkit.getPlayer(player.getUUID());
             if (bukkitPlayer == null) return null;
 
@@ -89,8 +89,10 @@ public class PlayerHandler {
                     UUID uuid = player.getUUID();
 
                     if (joinChecker.isAutoJoinEnabled() && joinChecker.canJoin(uuid)) {
-                        if (joinChecker.isMessageOnAutoJoin())
-                            libs.getMessageHandler().sendLangMessage(bukkitPlayer, "SuccessfullyRegisteredOnJoin");
+                        if (joinChecker.isMessageOnAutoJoin()) {
+                            LangFile langFile = ConfigUtils.get(LangFile.class);
+                            ChatUtils.sendPrefixedMessage(bukkitPlayer, langFile.getSuccessfullyRegisteredOnJoin());
+                        }
                         player.join(tournament);
                     }
                 }

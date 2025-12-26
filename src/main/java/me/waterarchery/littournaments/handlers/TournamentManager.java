@@ -1,9 +1,9 @@
 package me.waterarchery.littournaments.handlers;
 
+import com.chickennw.utils.ChickenUtils;
+import com.chickennw.utils.logger.LoggerFactory;
+import com.chickennw.utils.utils.ChatUtils;
 import lombok.Getter;
-import me.waterarchery.litlibs.LitLibs;
-import me.waterarchery.litlibs.logger.Logger;
-import me.waterarchery.litlibs.utils.ChatUtils;
 import me.waterarchery.littournaments.LitTournaments;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentLeaderboard;
@@ -14,6 +14,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -25,18 +26,19 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-public class TournamentHandler {
+public class TournamentManager {
 
+    private final Logger logger = LoggerFactory.getLogger();
     private final List<Tournament> tournaments = new ArrayList<>();
     private final List<Class<Tournament>> tournamentClasses = new ArrayList<>();
-    private static TournamentHandler instance;
+    private static TournamentManager instance;
 
-    public static TournamentHandler getInstance() {
-        if (instance == null) instance = new TournamentHandler();
+    public static TournamentManager getInstance() {
+        if (instance == null) instance = new TournamentManager();
         return instance;
     }
 
-    private TournamentHandler() {
+    private TournamentManager() {
     }
 
     public void reloadTournaments() {
@@ -63,9 +65,7 @@ public class TournamentHandler {
     }
 
     private void loadTournament(String identifier, FileConfiguration yml) {
-        LitLibs litLibs = LitTournaments.getLitLibs();
-        Logger logger = litLibs.getLogger();
-        logger.log("Loading tournament: " + identifier);
+        logger.info("Loading tournament: {}", identifier);
 
         String classType = yml.getString("Objective");
         assert classType != null;
@@ -78,19 +78,15 @@ public class TournamentHandler {
             }
         }
 
-        logger.error("There is no tournament called: " + classType);
+        logger.error("There is no tournament called: {}", classType);
     }
 
     private void loadClass(Class<Tournament> tournamentClass, Object... args) {
-        LitLibs libs = LitTournaments.getLitLibs();
-        Logger logger = libs.getLogger();
         try {
-            Class<?>[] argTypes = Arrays.stream(args)
-                    .map(Object::getClass)
-                    .toArray(Class<?>[]::new);
+            Class<?>[] argTypes = Arrays.stream(args).map(Object::getClass).toArray(Class<?>[]::new);
 
             Tournament tournament = tournamentClass.getDeclaredConstructor(argTypes).newInstance(args);
-            logger.log(String.format("Tournament loaded: %s", tournament.getIdentifier()));
+            logger.info("Tournament loaded: {}", tournament.getIdentifier());
             tournaments.add(tournament);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ex) {
             throw new RuntimeException(ex);
@@ -166,11 +162,11 @@ public class TournamentHandler {
     }
 
     public void parseTournamentReward(String command, @Nullable String targetPlayer) {
-        LitLibs libs = LitTournaments.getLitLibs();
-
         if (command.startsWith("[MESSAGE]") && targetPlayer != null) {
             Player player = Bukkit.getPlayer(targetPlayer);
-            if (player != null) libs.getMessageHandler().sendMessage(player, command.replace("[MESSAGE] ", ""));
+            if (player != null) {
+                ChatUtils.sendMessage(player, command.replace("[MESSAGE] ", ""));
+            }
         } else if (command.startsWith("[BROADCAST]")) {
             String message = ChatUtils.colorizeLegacy(command.replace("[BROADCAST] ", ""));
             Bukkit.broadcastMessage(message);
@@ -179,8 +175,7 @@ public class TournamentHandler {
             if (targetPlayer != null) command = command.replace("%player%", targetPlayer);
 
             String finalCommand = command;
-            LitTournaments.getFoliaLib().getScheduler().runNextTick(
-                    (task) -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand));
+            ChickenUtils.getFoliaLib().getScheduler().runNextTick((task) -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand));
         }
     }
 

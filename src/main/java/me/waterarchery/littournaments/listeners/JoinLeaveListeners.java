@@ -1,6 +1,6 @@
 package me.waterarchery.littournaments.listeners;
 
-import me.waterarchery.littournaments.handlers.PlayerHandler;
+import me.waterarchery.littournaments.handlers.PlayerManager;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,19 +12,19 @@ public class JoinLeaveListeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        PlayerHandler playerHandler = PlayerHandler.getInstance();
+        PlayerManager playerManager = PlayerManager.getInstance();
         Player player = event.getPlayer();
 
         TournamentPlayer tournamentPlayer = new TournamentPlayer(player.getUniqueId());
-        playerHandler.getPlayers().add(tournamentPlayer);
-        playerHandler.initializePlayer(tournamentPlayer, true);
+        playerManager.getPlayers().put(tournamentPlayer.getUUID(), tournamentPlayer);
+        playerManager.initializePlayer(tournamentPlayer, true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerLeave(PlayerJoinEvent event) {
-        PlayerHandler playerHandler = PlayerHandler.getInstance();
+        PlayerManager playerManager = PlayerManager.getInstance();
         Player player = event.getPlayer();
 
-        playerHandler.getPlayers().removeIf(tPlayer -> tPlayer.getUUID().equals(player.getUniqueId()));
+        playerManager.getPlayers().remove(player.getUniqueId());
     }
 }

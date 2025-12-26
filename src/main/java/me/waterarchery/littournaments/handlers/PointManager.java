@@ -1,10 +1,12 @@
 package me.waterarchery.littournaments.handlers;
 
 
-import me.waterarchery.litlibs.LitLibs;
-import me.waterarchery.littournaments.LitTournaments;
+import com.chickennw.utils.ChickenUtils;
+import com.chickennw.utils.utils.ChatUtils;
+import com.chickennw.utils.utils.ConfigUtils;
 import me.waterarchery.littournaments.api.events.PointAddEvent;
-import me.waterarchery.littournaments.database.Database;
+import me.waterarchery.littournaments.configurations.LangFile;
+import me.waterarchery.littournaments.database.TournamentDatabase;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bukkit.Bukkit;
@@ -13,16 +15,16 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PointHandler {
+public class PointManager {
 
-    private static PointHandler instance;
+    private static PointManager instance;
 
-    public static PointHandler getInstance() {
-        if (instance == null) instance = new PointHandler();
+    public static PointManager getInstance() {
+        if (instance == null) instance = new PointManager();
         return instance;
     }
 
-    private PointHandler() {
+    private PointManager() {
     }
 
     public void addPoint(UUID uuid, Tournament tournament, String worldName, String actionName, int point) {
@@ -34,19 +36,18 @@ public class PointHandler {
     public void addPoint(UUID uuid, Tournament tournament, int point, String actionName) {
         if (!tournament.isActive()) return;
 
-        LitLibs libs = LitTournaments.getLitLibs();
-        PlayerHandler playerHandler = PlayerHandler.getInstance();
-        TournamentPlayer tournamentPlayer = playerHandler.getPlayer(uuid);
+        PlayerManager playerManager = PlayerManager.getInstance();
+        TournamentPlayer tournamentPlayer = playerManager.getPlayer(uuid);
 
         if (tournamentPlayer == null) return;
 
         if (tournamentPlayer.isRegistered(tournament)) {
-            LitTournaments.getFoliaLib().getScheduler().runNextTick((task) -> {
+            ChickenUtils.getFoliaLib().getScheduler().runNextTick((task) -> {
                 PointAddEvent event = new PointAddEvent(tournament, uuid, point, actionName);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
 
-                Database database = LitTournaments.getDatabase();
+                TournamentDatabase database = TournamentDatabase.getInstance();
                 database.addPoint(uuid, tournament, point);
 
                 HashMap<Tournament, Long> map = tournamentPlayer.getTournamentValueMap();
@@ -55,7 +56,10 @@ public class PointHandler {
             });
         } else if (tournamentPlayer.isLoading()) {
             Player player = Bukkit.getPlayer(uuid);
-            libs.getMessageHandler().sendLangMessage(player, "StillLoading");
+            if (player != null) {
+                LangFile langFile = ConfigUtils.get(LangFile.class);
+                ChatUtils.sendPrefixedMessage(player, langFile.getStillLoading());
+            }
         }
     }
 

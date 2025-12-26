@@ -1,9 +1,9 @@
 package me.waterarchery.littournaments.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.waterarchery.littournaments.handlers.PlayerHandler;
-import me.waterarchery.littournaments.handlers.TournamentHandler;
-import me.waterarchery.littournaments.handlers.ValueHandler;
+import me.waterarchery.littournaments.handlers.PlayerManager;
+import me.waterarchery.littournaments.handlers.TournamentManager;
+import me.waterarchery.littournaments.handlers.ValueManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bukkit.OfflinePlayer;
@@ -28,66 +28,66 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-        TournamentHandler tournamentHandler = TournamentHandler.getInstance();
-        PlayerHandler playerHandler = PlayerHandler.getInstance();
-        ValueHandler valueHandler = ValueHandler.getInstance();
-        TournamentPlayer tournamentPlayer = playerHandler.getPlayer(player.getUniqueId());
+        TournamentManager tournamentManager = TournamentManager.getInstance();
+        PlayerManager playerManager = PlayerManager.getInstance();
+        ValueManager valueManager = ValueManager.getInstance();
+        TournamentPlayer tournamentPlayer = playerManager.getPlayer(player.getUniqueId());
 
         if (params.endsWith("_position")) {
             String tournamentName = params.replace("_position", "");
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
-                return valueHandler.getPlayerPosition(tournamentPlayer, tournament);
+                return valueManager.getPlayerPosition(tournamentPlayer, tournament);
             }
         } else if (params.endsWith("_score")) {
             String tournamentName = params.replace("_score", "");
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
-                return valueHandler.getPlayerScore(tournamentPlayer, tournament);
+                return valueManager.getPlayerScore(tournamentPlayer, tournament);
             }
         } else if (params.contains("_score_")) {
             String tournamentName = params.split("_score_")[0];
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
                 int pos = Integer.parseInt(params.split("_score_")[1]);
-                return valueHandler.getPlayerScoreWithPosition(pos, tournament) + "";
+                return valueManager.getPlayerScoreWithPosition(pos, tournament) + "";
             }
         } else if (params.contains("_player_")) {
             String tournamentName = params.split("_player_")[0];
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
                 int pos = Integer.parseInt(params.split("_player_")[1]);
-                return valueHandler.getPlayerNameWithPosition(pos, tournament);
+                return valueManager.getPlayerNameWithPosition(pos, tournament);
             }
         } else if (params.contains("_remaining_time_days")) {
             String tournamentName = params.split("_remaining_time_days")[0];
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
                 return tournament.getRemainingTime().toDays() + "";
             }
         } else if (params.contains("_remaining_time_hours")) {
             String tournamentName = params.split("_remaining_time_hours")[0];
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
                 return tournament.getRemainingTime().toHours() + "";
             }
         } else if (params.contains("_remaining_time_minutes")) {
             String tournamentName = params.split("_remaining_time_minutes")[0];
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
                 return tournament.getRemainingTime().toMinutes() + "";
             }
         } else if (params.contains("_remaining_time_seconds")) {
             String tournamentName = params.split("_remaining_time_seconds")[0];
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
                 return tournament.getRemainingTime().toSeconds() + "";
             }
         } else if (params.contains("_remaining_time")) {
             String tournamentName = params.split("_remaining_time")[0];
-            Tournament tournament = tournamentHandler.getTournament(tournamentName);
+            Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
-                return valueHandler.getRemainingTime(tournament);
+                return valueManager.getRemainingTime(tournament);
             }
         }
 
