@@ -2,19 +2,24 @@ package me.waterarchery.littournaments.guis;
 
 import com.chickennw.utils.libs.themoep.inventorygui.GuiElement;
 import com.chickennw.utils.libs.themoep.inventorygui.InventoryGui;
-import com.chickennw.utils.models.menus.LitMenu;
+import com.chickennw.utils.models.menus.LitMenuItemHolder;
+import com.chickennw.utils.models.menus.LitPaginatedMenu;
 import me.waterarchery.littournaments.models.Tournament;
+import me.waterarchery.littournaments.models.TournamentValue;
+import me.waterarchery.littournaments.utils.PlaceholderUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
-public class LeaderboardGUI extends LitMenu {
+public class LeaderboardGUI extends LitPaginatedMenu {
 
     private final Tournament tournament;
     private final boolean sendMessage;
@@ -27,34 +32,63 @@ public class LeaderboardGUI extends LitMenu {
 
     @Override
     public HashMap<String, GuiElement.Action> getGuiActions() {
-        return null;
+        return new HashMap<>();
     }
 
     @Override
-    public String parsePlaceholder(String s) {
-        return "";
+    public String parsePlaceholder(String placeholder) {
+        return PlaceholderUtils.parseTournamentPlaceholders(placeholder, tournament);
     }
 
     @Override
-    public List<String> parsePlaceholderAsList(String s) {
-        return List.of();
+    public List<String> parsePlaceholderAsList(String placeholder) {
+        return List.of(placeholder);
     }
 
     @Override
     public InventoryGui.CloseAction getCloseAction() {
-        return null;
+        return (close) -> false;
     }
 
-    private static void parseItemLore(ItemStack itemStack, OfflinePlayer player, String value, String pos) {
+    @Override
+    public List<LitMenuItemHolder> getTemplateItems() {
+        List<LitMenuItemHolder> items = new ArrayList<>();
+
+        int i = 1;
+        for (Map.Entry<Integer, TournamentValue> entry : tournament.getLeaderboard().getLeaderboard().entrySet()) {
+            TournamentValue tournamentValue = entry.getValue();
+            LitMenuItemHolder itemHolder = createItem(tournamentValue.getUuid(), "items.template-item");
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(tournamentValue.getUuid());
+            ItemStack itemStack = getItemStack(itemHolder, offlinePlayer.getName(), tournamentValue, i);
+            itemHolder.setItemStack(itemStack);
+            items.add(itemHolder);
+
+            itemHolder.getItem().setAction(click -> {
+                return true;
+            });
+
+            i++;
+        }
+
+        return items;
+    }
+
+    private @NonNull ItemStack getItemStack(LitMenuItemHolder itemHolder, String playerName, TournamentValue tournamentValue, int position) {
+        ItemStack itemStack = itemHolder.getItemStack();
         ItemMeta itemMeta = itemStack.getItemMeta();
-        List<String> newLore = new ArrayList<>();
 
-        assert itemMeta != null;
-        itemMeta.setDisplayName(itemMeta.getDisplayName().replace("%player%", Objects.requireNonNull(player.getName())));
+        String itemName = itemMeta.getDisplayName();
+        if (!itemName.equalsIgnoreCase("none")) itemMeta.setDisplayName(itemName.replace("%player-name%", playerName));
 
-        Objects.requireNonNull(itemMeta.getLore()).forEach(part -> newLore.add(part.replace("%name%", player.getName()).replace("%stat%", value).replace(
-                "%position%", pos)));
-        itemMeta.setLore(newLore);
+        List<String> oldLore = itemMeta.getLore();
+        List<String> lore = new ArrayList<>();
+        oldLore.forEach(part -> {
+            part = PlaceholderUtils.parseTournamentLeaderboardPlaceholders(part, tournamentValue, position)
+                    .replace("%player-name%", playerName);
+            lore.add(part);
+        });
+        itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 }

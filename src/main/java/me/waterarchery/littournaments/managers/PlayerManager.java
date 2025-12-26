@@ -100,8 +100,7 @@ public class PlayerManager {
 
             return pointMap;
         }, executor).thenAccept((map) -> {
-            if (map == null) return;
-
+            if (map == null) throw new NullPointerException("Map is null");
             map.forEach((k, v) -> player.getTournamentValueMap().put(k, v));
             player.setLoading(false);
         });

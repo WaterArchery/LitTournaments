@@ -32,11 +32,6 @@ public class TournamentValue {
         this.value = value;
     }
 
-    public TournamentValue(UUID uuid, long value) {
-        this.uuid = uuid;
-        this.value = value;
-    }
-
     @Transient
     public String getName() {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);

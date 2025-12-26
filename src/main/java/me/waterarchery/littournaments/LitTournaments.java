@@ -4,8 +4,8 @@ import com.chickennw.utils.ChickenUtils;
 import com.chickennw.utils.logger.LoggerFactory;
 import com.chickennw.utils.managers.CommandManager;
 import me.waterarchery.littournaments.database.TournamentDatabase;
-import me.waterarchery.littournaments.managers.LoadManager;
 import me.waterarchery.littournaments.hooks.PlaceholderAPIHook;
+import me.waterarchery.littournaments.managers.LoadManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 

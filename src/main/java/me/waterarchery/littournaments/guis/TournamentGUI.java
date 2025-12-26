@@ -2,44 +2,78 @@ package me.waterarchery.littournaments.guis;
 
 import com.chickennw.utils.libs.themoep.inventorygui.GuiElement;
 import com.chickennw.utils.libs.themoep.inventorygui.InventoryGui;
-import com.chickennw.utils.logger.LoggerFactory;
+import com.chickennw.utils.libs.themoep.inventorygui.StaticGuiElement;
 import com.chickennw.utils.models.menus.LitMenu;
+import com.chickennw.utils.utils.ChatUtils;
+import com.chickennw.utils.utils.ConfigUtils;
+import com.chickennw.utils.utils.SoundUtils;
+import lombok.extern.slf4j.Slf4j;
+import me.waterarchery.littournaments.configurations.LangFile;
+import me.waterarchery.littournaments.configurations.SoundsFile;
 import me.waterarchery.littournaments.managers.PlayerManager;
 import me.waterarchery.littournaments.managers.TournamentManager;
 import me.waterarchery.littournaments.managers.ValueManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.slf4j.Logger;
 
 import java.text.NumberFormat;
 import java.util.*;
 
+@Slf4j
 public class TournamentGUI extends LitMenu {
 
     private static final NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
-    private final Logger logger;
     private final TournamentPlayer tournamentPlayer;
 
     public TournamentGUI(Player player) {
         super("tournaments", player);
-        logger = LoggerFactory.getLogger();
 
         PlayerManager playerManager = PlayerManager.getInstance();
         this.tournamentPlayer = playerManager.getPlayer(player.getUniqueId());
     }
 
-    @Override
-    public ItemStack createItemStack(UUID player, String path) {
-        ItemStack itemStack = super.createItemStack(player, path);
+    public List<GuiElement> getGuiElements() {
+        List<GuiElement> elements = new ArrayList<>();
+        yaml.getConfigurationSection("items").getKeys(false).forEach((key) -> {
+            char symbol = Objects.requireNonNull(yaml.getString("items." + key + ".symbol")).charAt(0);
+            ItemStack created = createItemStack(player.getUniqueId(), "items." + key);
+            Tournament tournament = TournamentManager.getInstance().getTournament(key);
 
-        Tournament tournament = TournamentManager.getInstance().getTournament(path.replace("items.", ""));
-        if (tournament != null) {
-            parseLore(itemStack, tournamentPlayer, tournament);
-        }
-        return itemStack;
+            if (tournament != null) {
+                parseLore(created, tournamentPlayer, tournament);
+            }
+
+            GuiElement.Action action = (click) -> {
+                SoundsFile soundsFile = ConfigUtils.get(SoundsFile.class);
+                LangFile langFile = ConfigUtils.get(LangFile.class);
+                if (tournament == null) return true;
+
+                if (click.getType() == ClickType.LEFT) {
+                    if (tournamentPlayer.isRegistered(tournament)) {
+                        ChatUtils.sendPrefixedMessage(player, langFile.getAlreadyJoined());
+                        SoundUtils.sendSoundRaw(player, soundsFile.getAlreadyJoined());
+                        player.closeInventory();
+                    } else {
+                        tournamentPlayer.join(tournament);
+                        ChatUtils.sendPrefixedMessage(player, langFile.getSuccessfullyRegistered());
+                        SoundUtils.sendSoundRaw(player, soundsFile.getSuccessfullyJoined());
+                        redraw(player);
+                    }
+                } else if (click.getType() == ClickType.RIGHT) {
+                    LeaderboardGUI leaderboardGUI = new LeaderboardGUI(player, tournament, true);
+                    leaderboardGUI.openAsync(player);
+                }
+
+                return true;
+            };
+
+            elements.add(new StaticGuiElement(symbol, created, action));
+        });
+        return elements;
     }
 
     @Override
@@ -68,8 +102,9 @@ public class TournamentGUI extends LitMenu {
         List<String> lore = new ArrayList<>();
 
         for (String part : Objects.requireNonNull(itemMeta.getLore())) {
-            part = part.replace("%position%", valueManager.getPlayerPosition(tournamentPlayer, tournament)).replace("%stat%",
-                    valueManager.getPlayerScore(tournamentPlayer, tournament)).replace("%remaining_time%", valueManager.getRemainingTime(tournament));
+            part = part.replace("%position%", ChatUtils.colorizeLegacy(valueManager.getPlayerPosition(tournamentPlayer, tournament)))
+                    .replace("%stat%", ChatUtils.colorizeLegacy(valueManager.getPlayerScore(tournamentPlayer, tournament)))
+                    .replace("%remaining_time%", ChatUtils.colorizeLegacy(valueManager.getRemainingTime(tournament)));
 
             List<String> otherPlaceholders = getPlaceholders(part);
 

@@ -2,7 +2,6 @@ package me.waterarchery.littournaments.models;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.waterarchery.littournaments.LitTournaments;
 import me.waterarchery.littournaments.database.TournamentDatabase;
 
 import java.util.HashMap;

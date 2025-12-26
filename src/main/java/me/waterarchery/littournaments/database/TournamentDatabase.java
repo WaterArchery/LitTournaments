@@ -14,7 +14,6 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class TournamentDatabase extends Database {
 
@@ -82,8 +81,6 @@ public class TournamentDatabase extends Database {
                 }
 
                 tx.commit();
-            } catch (Exception ex) {
-                LitTournaments.getInstance().getLogger().log(Level.SEVERE, "Error registering to tournament", ex);
             }
         });
     }
@@ -100,8 +97,6 @@ public class TournamentDatabase extends Database {
                         .executeUpdate();
 
                 tx.commit();
-            } catch (Exception ex) {
-                LitTournaments.getInstance().getLogger().log(Level.SEVERE, "Error deleting from tournament", ex);
             }
         });
     }
@@ -126,8 +121,6 @@ public class TournamentDatabase extends Database {
                     leaderboard.setPosition(value, pos);
                     pos++;
                 }
-            } catch (Exception ex) {
-                LitTournaments.getInstance().getLogger().log(Level.SEVERE, "Error reloading leaderboard", ex);
             }
         };
     }
@@ -143,8 +136,6 @@ public class TournamentDatabase extends Database {
                         .executeUpdate();
 
                 tx.commit();
-            } catch (Exception ex) {
-                LitTournaments.getInstance().getLogger().log(Level.SEVERE, "Error clearing tournament", ex);
             }
         });
     }
@@ -158,7 +149,6 @@ public class TournamentDatabase extends Database {
                 .setMaxResults(1)
                 .getResultList();
 
-        if (results.isEmpty()) throw new RuntimeException("No tournament with id " + tournamentId + " found");
-        return results.getFirst();
+        return results.isEmpty() ? new TournamentValue(tournamentId, uuid, 0) : results.getFirst();
     }
 }
