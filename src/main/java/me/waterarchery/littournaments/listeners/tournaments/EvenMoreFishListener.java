@@ -1,8 +1,8 @@
 package me.waterarchery.littournaments.listeners.tournaments;
 
 import com.oheers.fish.api.EMFFishEvent;
-import me.waterarchery.littournaments.handlers.PointManager;
-import me.waterarchery.littournaments.handlers.TournamentManager;
+import me.waterarchery.littournaments.managers.PointManager;
+import me.waterarchery.littournaments.managers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.EvenMoreFishTournament;
 import org.bukkit.World;

@@ -1,4 +1,4 @@
-package me.waterarchery.littournaments.handlers;
+package me.waterarchery.littournaments.managers;
 
 import com.chickennw.utils.logger.LoggerFactory;
 import com.chickennw.utils.utils.ChatUtils;
@@ -106,5 +106,4 @@ public class PlayerManager {
             player.setLoading(false);
         });
     }
-
 }

@@ -1,9 +1,9 @@
 package me.waterarchery.littournaments.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.waterarchery.littournaments.handlers.PlayerManager;
-import me.waterarchery.littournaments.handlers.TournamentManager;
-import me.waterarchery.littournaments.handlers.ValueManager;
+import me.waterarchery.littournaments.managers.PlayerManager;
+import me.waterarchery.littournaments.managers.TournamentManager;
+import me.waterarchery.littournaments.managers.ValueManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bukkit.OfflinePlayer;

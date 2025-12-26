@@ -1,6 +1,6 @@
 package me.waterarchery.littournaments.listeners;
 
-import me.waterarchery.littournaments.handlers.PlayerManager;
+import me.waterarchery.littournaments.managers.PlayerManager;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

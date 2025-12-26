@@ -1,12 +1,10 @@
 title: '<#47D4FF>Tournaments'
-size: 45
 open_sound: BLOCK_NOTE_BLOCK_PLING
 pattern:
-  - 'ggg---ggg'
   - '---------'
   - '--b-p-c--'
   - '---------'
-  - '-m-i-k-x-'
+  - '--m-i-k--'
   - '---------'
 filler:
   enabled: true
@@ -14,19 +12,6 @@ filler:
   name: '<dark_gray>'
   lore: []
 items:
-  decoration_green:
-    name: '<dark_gray>'
-    material: GREEN_STAINED_GLASS_PANE
-    lore: []
-    symbol: g
-
-  close_menu:
-    name: '<red>Close Menu'
-    material: BARRIER
-    action: close
-    lore: []
-    symbol: x
-
   block_break:
     name: '<#47D4FF>Block Break Tournament'
     lore:

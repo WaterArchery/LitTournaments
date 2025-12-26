@@ -2,13 +2,17 @@ package me.waterarchery.littournaments.guis;
 
 import com.chickennw.utils.libs.themoep.inventorygui.GuiElement;
 import com.chickennw.utils.libs.themoep.inventorygui.InventoryGui;
+import com.chickennw.utils.logger.LoggerFactory;
 import com.chickennw.utils.models.menus.LitMenu;
-import me.waterarchery.littournaments.handlers.*;
+import me.waterarchery.littournaments.managers.PlayerManager;
+import me.waterarchery.littournaments.managers.TournamentManager;
+import me.waterarchery.littournaments.managers.ValueManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.slf4j.Logger;
 
 import java.text.NumberFormat;
 import java.util.*;
@@ -16,69 +20,83 @@ import java.util.*;
 public class TournamentGUI extends LitMenu {
 
     private static final NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
+    private final Logger logger;
+    private final TournamentPlayer tournamentPlayer;
 
     public TournamentGUI(Player player) {
         super("tournaments", player);
+        logger = LoggerFactory.getLogger();
+
+        PlayerManager playerManager = PlayerManager.getInstance();
+        this.tournamentPlayer = playerManager.getPlayer(player.getUniqueId());
+    }
+
+    @Override
+    public ItemStack createItemStack(UUID player, String path) {
+        ItemStack itemStack = super.createItemStack(player, path);
+
+        Tournament tournament = TournamentManager.getInstance().getTournament(path.replace("items.", ""));
+        if (tournament != null) {
+            parseLore(itemStack, tournamentPlayer, tournament);
+        }
+        return itemStack;
     }
 
     @Override
     public HashMap<String, GuiElement.Action> getGuiActions() {
-        return null;
+        return new HashMap<>();
     }
 
     @Override
-    public String parsePlaceholder(String s) {
-        return "";
+    public String parsePlaceholder(String part) {
+        return part;
     }
 
     @Override
     public List<String> parsePlaceholderAsList(String s) {
-        return List.of();
+        return List.of(s);
     }
 
     @Override
     public InventoryGui.CloseAction getCloseAction() {
-        return null;
+        return (action) -> true;
     }
 
     private void parseLore(ItemStack itemStack, TournamentPlayer tournamentPlayer, Tournament tournament) {
         ValueManager valueManager = ValueManager.getInstance();
         ItemMeta itemMeta = itemStack.getItemMeta();
+        List<String> lore = new ArrayList<>();
 
-        if (itemMeta != null && itemMeta.hasLore()) {
-            List<String> lore = new ArrayList<>();
+        for (String part : Objects.requireNonNull(itemMeta.getLore())) {
+            part = part.replace("%position%", valueManager.getPlayerPosition(tournamentPlayer, tournament)).replace("%stat%",
+                    valueManager.getPlayerScore(tournamentPlayer, tournament)).replace("%remaining_time%", valueManager.getRemainingTime(tournament));
 
-            for (String part : Objects.requireNonNull(itemMeta.getLore())) {
-                part = part.replace("%position%", valueManager.getPlayerPosition(tournamentPlayer, tournament)).replace("%stat%",
-                        valueManager.getPlayerScore(tournamentPlayer, tournament)).replace("%remaining_time%", valueManager.getRemainingTime(tournament));
+            List<String> otherPlaceholders = getPlaceholders(part);
 
-                List<String> otherPlaceholders = getPlaceholders(part);
+            for (String placeholder : otherPlaceholders) {
+                if (placeholder.contains("leader_score_formatted_")) {
+                    int pos = Integer.parseInt(placeholder.replace("leader_score_formatted_", "").replace("%", ""));
 
-                for (String placeholder : otherPlaceholders) {
-                    if (placeholder.contains("leader_score_formatted_")) {
-                        int pos = Integer.parseInt(placeholder.replace("leader_score_formatted_", "").replace("%", ""));
+                    String score = numberFormat.format(valueManager.getPlayerScoreWithPosition(pos, tournament));
+                    part = part.replace(placeholder, score);
+                } else if (placeholder.contains("leader_score_")) {
+                    int pos = Integer.parseInt(placeholder.replace("leader_score_", "").replace("%", ""));
 
-                        String score = numberFormat.format(valueManager.getPlayerScoreWithPosition(pos, tournament));
-                        part = part.replace(placeholder, score);
-                    } else if (placeholder.contains("leader_score_")) {
-                        int pos = Integer.parseInt(placeholder.replace("leader_score_", "").replace("%", ""));
-
-                        String score = String.valueOf(valueManager.getPlayerScoreWithPosition(pos, tournament));
-                        part = part.replace(placeholder, score);
-                    }
-                    if (placeholder.contains("leader_name_")) {
-                        int pos = Integer.parseInt(placeholder.replace("leader_name_", "").replace("%", ""));
-
-                        part = part.replace(placeholder, valueManager.getPlayerNameWithPosition(pos, tournament));
-                    }
+                    String score = String.valueOf(valueManager.getPlayerScoreWithPosition(pos, tournament));
+                    part = part.replace(placeholder, score);
                 }
+                if (placeholder.contains("leader_name_")) {
+                    int pos = Integer.parseInt(placeholder.replace("leader_name_", "").replace("%", ""));
 
-                lore.add(part);
+                    part = part.replace(placeholder, valueManager.getPlayerNameWithPosition(pos, tournament));
+                }
             }
 
-            itemMeta.setLore(lore);
-            itemStack.setItemMeta(itemMeta);
+            lore.add(part);
         }
+
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
     }
 
     private List<String> getPlaceholders(String part) {

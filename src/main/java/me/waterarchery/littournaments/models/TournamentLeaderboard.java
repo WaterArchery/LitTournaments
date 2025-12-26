@@ -24,7 +24,7 @@ public class TournamentLeaderboard {
     public int getPlayerPos(TournamentPlayer tournamentPlayer) {
         for (int pos : leaderboard.keySet()) {
             TournamentValue value = leaderboard.get(pos);
-            if (value.uuid().equals(tournamentPlayer.getUUID())) return pos;
+            if (value.getUuid().equals(tournamentPlayer.getUUID())) return pos;
         }
 
         return 0;

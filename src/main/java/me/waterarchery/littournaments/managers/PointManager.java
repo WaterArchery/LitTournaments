@@ -1,4 +1,4 @@
-package me.waterarchery.littournaments.handlers;
+package me.waterarchery.littournaments.managers;
 
 
 import com.chickennw.utils.ChickenUtils;

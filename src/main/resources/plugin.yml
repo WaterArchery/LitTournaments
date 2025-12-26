@@ -6,8 +6,12 @@ authors: [ WaterArchery ]
 description: Create fun tournaments for players
 folia-supported: true
 libraries:
-  - org.mariadb.jdbc:mariadb-java-client:3.5.2
-  - com.zaxxer:HikariCP:6.0.0
+  - org.hibernate.orm:hibernate-hikaricp:6.6.13.Final
+  - org.hibernate.orm:hibernate-core:6.6.13.Final
+  - com.h2database:h2:2.3.232
+  - com.zaxxer:HikariCP:6.2.1
+  - org.mariadb.jdbc:mariadb-java-client:3.5.3
+  - mysql:mysql-connector-java:8.0.33
 softdepend:
   - NuVotifier
   - Votifier
@@ -20,5 +24,3 @@ softdepend:
   - RivalHarvesterHoes
   - EvenMoreFish
   - ShopGuiPlus
-depend:
-  - LitLibs

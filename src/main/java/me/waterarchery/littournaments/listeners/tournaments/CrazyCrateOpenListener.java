@@ -2,8 +2,8 @@ package me.waterarchery.littournaments.listeners.tournaments;
 
 import com.badbones69.crazycrates.api.events.CrateOpenEvent;
 import com.badbones69.crazycrates.api.objects.Crate;
-import me.waterarchery.littournaments.handlers.PointManager;
-import me.waterarchery.littournaments.handlers.TournamentManager;
+import me.waterarchery.littournaments.managers.PointManager;
+import me.waterarchery.littournaments.managers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.CrazyCrateTournament;
 import org.bukkit.entity.Player;

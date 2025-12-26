@@ -1,7 +1,7 @@
 package me.waterarchery.littournaments.api;
 
 import me.waterarchery.littournaments.LitTournaments;
-import me.waterarchery.littournaments.handlers.*;
+import me.waterarchery.littournaments.managers.*;
 
 @SuppressWarnings("unused")
 public class LitTournamentsAPI {

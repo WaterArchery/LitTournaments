@@ -1,5 +1,6 @@
-package me.waterarchery.littournaments.handlers;
+package me.waterarchery.littournaments.managers;
 
+import com.chickennw.utils.libs.cmd.core.suggestion.SuggestionKey;
 import com.chickennw.utils.logger.LoggerFactory;
 import com.chickennw.utils.managers.CommandManager;
 import com.chickennw.utils.managers.ConfigManager;
@@ -25,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +69,7 @@ public class LoadManager {
         configManager.loadOkaeriConfig(ConfigFile.class);
         configManager.loadOkaeriConfig(LangFile.class);
         configManager.loadOkaeriConfig(SoundsFile.class);
-        configManager.createFiles("menus");
+        configManager.createFiles("menu");
 
         LitTournaments instance = LitTournaments.getInstance();
         File tournamentsFolder = new File(instance.getDataFolder(), "/tournaments");
@@ -115,6 +117,17 @@ public class LoadManager {
 
     private void registerCommands() {
         CommandManager commandManager = CommandManager.getInstance();
+
+        commandManager.registerSuggestion(SuggestionKey.of("tournaments"), (sender) -> {
+            TournamentManager tournamentManager = TournamentManager.getInstance();
+            List<String> tournaments = new ArrayList<>();
+
+            for (Tournament tournament : tournamentManager.getTournaments()) {
+                tournaments.add(tournament.getIdentifier());
+            }
+
+            return tournaments;
+        });
 
         commandManager.registerCommand(new TournamentCommand());
     }
@@ -177,7 +190,7 @@ public class LoadManager {
 
         ConfigFile configFile = ConfigUtils.get(ConfigFile.class);
         metrics.addCustomChart(new SimplePie("webhook_used", () -> String.valueOf(configFile.getDiscordWebhook().isEnabled())));
-        metrics.addCustomChart(new SimplePie("database_type", () -> configFile.getTournamentDatabase().getDatabaseType()));
+        metrics.addCustomChart(new SimplePie("database_type", () -> configFile.getDatabase().getType()));
         metrics.addCustomChart(new SimplePie("language_used", configFile::getLanguage));
         metrics.addCustomChart(new SingleLineChart("tournaments_count", () -> tournamentManager.getTournaments().size()));
     }

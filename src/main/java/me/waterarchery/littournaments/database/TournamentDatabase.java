@@ -9,11 +9,12 @@ import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentLeaderboard;
 import me.waterarchery.littournaments.models.TournamentValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import java.sql.*;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class TournamentDatabase extends Database {
 
@@ -24,162 +25,140 @@ public class TournamentDatabase extends Database {
             ConfigFile configFile = ConfigUtils.get(ConfigFile.class);
             instance = new TournamentDatabase(LitTournaments.getInstance(), configFile.getDatabase());
         }
-
         return instance;
     }
 
-    private TournamentDatabase(JavaPlugin plugin, DatabaseConfiguration config) {
-        super(plugin, config);
+    private TournamentDatabase(JavaPlugin plugin, DatabaseConfiguration databaseConfiguration) {
+        super(plugin, databaseConfiguration);
     }
 
     public void load(List<Tournament> tournaments) {
-        try (Connection connection = getSQLConnection()) {
-            tournaments.forEach(tournament -> {
-                try {
-                    String tableName = tournament.getIdentifier();
-                    String query = createTableToken.replace("{{TOURNAMENT_NAME}}", tableName);
-                    Statement s = connection.createStatement();
-                    s.executeUpdate(query);
-                    s.close();
-
-                    reloadLeaderboard(tournament);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        tournaments.forEach(this::reloadLeaderboard);
     }
 
     public void addPoint(UUID uuid, Tournament tournament, long point) {
-        Runnable runnable = () -> {
-            String query = String.format("INSERT INTO %s (player, score) VALUES(?, ?) " + "ON DUPLICATE KEY UPDATE score = score + ?;",
-                    tournament.getIdentifier());
-
-            try (Connection connection = getSQLConnection()) {
-                PreparedStatement stmt = connection.prepareStatement(query);
-
-                stmt.setString(1, uuid.toString());
-                stmt.setLong(2, point);
-                stmt.setLong(3, point);
-
-                stmt.executeUpdate();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+        executor.submit(() -> {
+            try (Session session = sessionFactory.openSession()) {
+                Transaction tx = session.beginTransaction();
+                TournamentValue existing = findByPlayerAndTournament(session, uuid, tournament.getIdentifier());
+                existing.setValue(existing.getValue() + point);
+                session.merge(existing);
+                tx.commit();
             }
-        };
-
-        threadPool.submit(runnable);
+        });
     }
 
     public void setPoint(UUID uuid, Tournament tournament, long point) {
-        Runnable runnable = () -> {
-            String query = String.format("REPLACE INTO %s (player, score) VALUES(?, ?);", tournament.getIdentifier());
-
-            try (Connection connection = getSQLConnection()) {
-                PreparedStatement stmt = connection.prepareStatement(query);
-                stmt.setString(1, uuid.toString());
-                stmt.setLong(2, point);
-
-                stmt.executeUpdate();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+        executor.submit(() -> {
+            try (Session session = sessionFactory.openSession()) {
+                Transaction tx = session.beginTransaction();
+                TournamentValue existing = findByPlayerAndTournament(session, uuid, tournament.getIdentifier());
+                existing.setValue(point);
+                session.merge(existing);
+                tx.commit();
             }
-        };
-
-        threadPool.submit(runnable);
+        });
     }
 
     public long getPoint(UUID uuid, Tournament tournament) {
-        String query = String.format("SELECT score FROM %s WHERE player = ? LIMIT 1;", tournament.getIdentifier());
-
-        try (Connection connection = getSQLConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, uuid.toString());
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getLong("score");
-            else return -9999;
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+        try (Session session = sessionFactory.openSession()) {
+            TournamentValue existing = findByPlayerAndTournament(session, uuid, tournament.getIdentifier());
+            return existing.getValue();
         }
     }
 
     public void registerToTournament(UUID uuid, Tournament tournament) {
-        Runnable runnable = () -> {
-            String QUERY = String.format("INSERT INTO %s (player, score) VALUES(?, ?);", tournament.getIdentifier());
+        executor.submit(() -> {
+            try (Session session = sessionFactory.openSession()) {
+                Transaction tx = session.beginTransaction();
+                tx.begin();
 
-            try (Connection connection = getSQLConnection()) {
-                PreparedStatement stmt = connection.prepareStatement(QUERY);
-                stmt.setString(1, uuid.toString());
-                stmt.setLong(2, 0L);
+                String tournamentId = tournament.getIdentifier();
+                TournamentValue existing = findByPlayerAndTournament(session, uuid, tournamentId);
 
-                stmt.executeUpdate();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+                if (existing == null) {
+                    TournamentValue newValue = new TournamentValue(tournamentId, uuid, 0L);
+                    session.persist(newValue);
+                }
+
+                tx.commit();
+            } catch (Exception ex) {
+                LitTournaments.getInstance().getLogger().log(Level.SEVERE, "Error registering to tournament", ex);
             }
-        };
-
-        threadPool.submit(runnable);
+        });
     }
 
     public void deleteFromTournament(UUID uuid, Tournament tournament) {
-        Runnable runnable = () -> {
-            String query = String.format("DELETE FROM %s WHERE player = ?;", tournament.getIdentifier());
+        executor.submit(() -> {
+            try (Session session = sessionFactory.openSession()) {
+                Transaction tx = session.beginTransaction();
+                tx.begin();
 
-            try (Connection connection = getSQLConnection()) {
-                PreparedStatement stmt = connection.prepareStatement(query);
-                stmt.setString(1, uuid.toString());
+                session.createQuery("DELETE FROM TournamentValue t WHERE t.uuid = :uuid AND t.tournamentId = :tournamentId")
+                        .setParameter("uuid", uuid)
+                        .setParameter("tournamentId", tournament.getIdentifier())
+                        .executeUpdate();
 
-                stmt.executeUpdate();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+                tx.commit();
+            } catch (Exception ex) {
+                LitTournaments.getInstance().getLogger().log(Level.SEVERE, "Error deleting from tournament", ex);
             }
-        };
-
-        threadPool.submit(runnable);
+        });
     }
 
     public void reloadLeaderboard(Tournament tournament) {
-        threadPool.submit(getReloadTournamentRunnable(tournament));
+        executor.submit(getReloadTournamentRunnable(tournament));
     }
 
     public Runnable getReloadTournamentRunnable(Tournament tournament) {
         return () -> {
-            String query = String.format("SELECT * FROM %s ORDER BY score DESC;", tournament.getIdentifier());
-            TournamentLeaderboard leaderboard = tournament.getLeaderboard();
+            try (Session session = sessionFactory.openSession()) {
+                TournamentLeaderboard leaderboard = tournament.getLeaderboard();
 
-            try (Connection connection = getSQLConnection()) {
-                PreparedStatement stmt = connection.prepareStatement(query);
-                ResultSet rs = stmt.executeQuery();
+                List<TournamentValue> results = session.createQuery(
+                                "SELECT t FROM TournamentValue t WHERE t.tournamentId = :tournamentId ORDER BY t.value DESC",
+                                TournamentValue.class)
+                        .setParameter("tournamentId", tournament.getIdentifier())
+                        .getResultList();
 
                 int pos = 1;
-                while (rs.next()) {
-                    UUID uuid = UUID.fromString(rs.getString("player"));
-                    long score = rs.getLong("score");
-
-                    TournamentValue tournamentValue = new TournamentValue(uuid, score);
-                    leaderboard.setPosition(tournamentValue, pos);
+                for (TournamentValue value : results) {
+                    leaderboard.setPosition(value, pos);
                     pos++;
                 }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+            } catch (Exception ex) {
+                LitTournaments.getInstance().getLogger().log(Level.SEVERE, "Error reloading leaderboard", ex);
             }
         };
     }
 
     public void clearTournament(Tournament tournament) {
-        Runnable runnable = () -> {
-            String query = String.format("DELETE FROM %s;", tournament.getIdentifier());
+        executor.submit(() -> {
+            try (Session session = sessionFactory.openSession()) {
+                Transaction tx = session.beginTransaction();
+                tx.begin();
 
-            try (Connection connection = getSQLConnection()) {
-                PreparedStatement stmt = connection.prepareStatement(query);
-                stmt.executeUpdate();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+                session.createQuery("DELETE FROM TournamentValue t WHERE t.tournamentId = :tournamentId")
+                        .setParameter("tournamentId", tournament.getIdentifier())
+                        .executeUpdate();
+
+                tx.commit();
+            } catch (Exception ex) {
+                LitTournaments.getInstance().getLogger().log(Level.SEVERE, "Error clearing tournament", ex);
             }
-        };
+        });
+    }
 
-        threadPool.submit(runnable);
+    private TournamentValue findByPlayerAndTournament(Session session, UUID uuid, String tournamentId) {
+        List<TournamentValue> results = session.createQuery(
+                        "SELECT t FROM TournamentValue t WHERE t.uuid = :uuid AND t.tournamentId = :tournamentId",
+                        TournamentValue.class)
+                .setParameter("uuid", uuid)
+                .setParameter("tournamentId", tournamentId)
+                .setMaxResults(1)
+                .getResultList();
+
+        if (results.isEmpty()) throw new RuntimeException("No tournament with id " + tournamentId + " found");
+        return results.getFirst();
     }
 }

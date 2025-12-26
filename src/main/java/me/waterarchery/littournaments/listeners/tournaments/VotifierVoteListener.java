@@ -2,8 +2,8 @@ package me.waterarchery.littournaments.listeners.tournaments;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
-import me.waterarchery.littournaments.handlers.PointManager;
-import me.waterarchery.littournaments.handlers.TournamentManager;
+import me.waterarchery.littournaments.managers.PointManager;
+import me.waterarchery.littournaments.managers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.PlayerVoteTournament;
 import org.bukkit.Bukkit;

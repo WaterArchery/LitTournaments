@@ -10,9 +10,9 @@ import me.waterarchery.littournaments.api.events.TournamentEndEvent;
 import me.waterarchery.littournaments.api.events.TournamentStartEvent;
 import me.waterarchery.littournaments.configurations.ConfigFile;
 import me.waterarchery.littournaments.database.TournamentDatabase;
-import me.waterarchery.littournaments.handlers.PlayerManager;
-import me.waterarchery.littournaments.handlers.TournamentManager;
-import me.waterarchery.littournaments.handlers.WebhookHandler;
+import me.waterarchery.littournaments.managers.PlayerManager;
+import me.waterarchery.littournaments.managers.TournamentManager;
+import me.waterarchery.littournaments.managers.WebhookHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 

@@ -1,4 +1,4 @@
-package me.waterarchery.littournaments.handlers;
+package me.waterarchery.littournaments.managers;
 
 import com.chickennw.utils.utils.ConfigUtils;
 import me.waterarchery.littournaments.configurations.LangFile;
@@ -48,8 +48,7 @@ public class ValueManager {
         TournamentLeaderboard leaderboard = tournament.getLeaderboard();
         TournamentValue value = leaderboard.getPlayer(position).orElse(null);
 
-        if (value != null) return value.value();
-
+        if (value != null) return value.getValue();
         return 0;
     }
 
