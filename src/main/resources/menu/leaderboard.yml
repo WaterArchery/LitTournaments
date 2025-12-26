@@ -15,30 +15,30 @@ items:
     name: '%player-name%'
     lore:
       - ''
-      - <#47D4FF><bold>PLAYER STATS
-      - '<#47D4FF>| <#CCFFEE>Player''s Name: <#47D4FF>%player-name%'
-      - '<#47D4FF>| <#CCFFEE>Score: <#47D4FF>%player-score%'
-      - '<#47D4FF>| <#CCFFEE>Position: <#47D4FF>%player-position%'
+      - <#47D4FF><bold>ᴘʟᴀʏᴇʀ sᴛᴀᴛs
+      - '<#47D4FF>| <#CCFFEE>ᴘʟᴀʏᴇʀ''s ɴᴀᴍᴇ: <#47D4FF>%player-name%'
+      - '<#47D4FF>| <#CCFFEE>sᴄᴏʀᴇ: <#47D4FF>%player-score%'
+      - '<#47D4FF>| <#CCFFEE>ᴘᴏsɪᴛɪᴏɴ: <#47D4FF>%player-position%'
     material: PLAYER
     action: template
     symbol: i
   previous-page:
-    name: <red><#47D4FF>%tournament% Leaderboard
+    name: <red><#47D4FF>%tournament% ʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ
     material: ARROW
     custom-model-data: -1
     lore:
       - ''
-      - <#CCFFEE>Click here to navigate
-      - <#47D4FF>previous page.
+      - <#CCFFEE>ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ɴᴀᴠɪɢᴀᴛᴇ
+      - <#47D4FF>ᴘʀᴇᴠɪᴏᴜs ᴘᴀɢᴇ.
     symbol: p
     action: previous_page
   next-page:
-    name: <red>Next Page
+    name: <red>ɴᴇxᴛ ᴘᴀɢᴇ
     material: ARROW
     custom-model-data: -1
     lore:
       - ''
-      - <#CCFFEE>Click here to navigate
-      - <#47D4FF>next page.
+      - <#CCFFEE>ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ɴᴀᴠɪɢᴀᴛᴇ
+      - <#47D4FF>ɴᴇxᴛ ᴘᴀɢᴇ.
     symbol: n
     action: next_page
