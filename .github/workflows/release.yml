@@ -37,7 +37,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh release view "v${{ steps.get_version.outputs.VERSION }}" > /dev/null 2>&1; then
+          if gh release view "${{ steps.get_version.outputs.VERSION }}" > /dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
@@ -60,8 +60,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "v${{ steps.get_version.outputs.VERSION }}" \
-            --title "Release v${{ steps.get_version.outputs.VERSION }}" \
+          gh release create "${{ steps.get_version.outputs.VERSION }}" \
+            --title "Release ${{ steps.get_version.outputs.VERSION }}" \
             --generate-notes \
             ${{ steps.find_jar.outputs.JAR_FILE }}
 
