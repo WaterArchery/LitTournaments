@@ -2,48 +2,62 @@ name: Trigger JitPack Build on Release
 
 on:
   release:
-    types: [published]
+    types: [published, created]
+  workflow_run:
+    workflows: ["Create Release on Push"]
+    types:
+      - completed
 
 jobs:
   jitpack-build:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'release' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Get repository info
-        id: repo_info
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from release or pom.xml
+        id: get_version
         run: |
-          echo "REPO_OWNER=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
-          echo "REPO_NAME=${{ github.event.repository.name }}" >> $GITHUB_OUTPUT
-          echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" == "release" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+          else
+            VERSION=$(grep -m1 '<version>' pom.xml | sed 's/.*<version>\(.*\)<\/version>.*/\1/')
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
 
       - name: Trigger JitPack Build
+        env:
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
-          echo "Triggering JitPack build for ${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }} @ ${{ steps.repo_info.outputs.TAG }}"
+          echo "Triggering JitPack build for ${REPO_OWNER}/${REPO_NAME} @ ${VERSION}"
           
           # JitPack build is triggered by accessing the artifact URL
-          JITPACK_URL="https://jitpack.io/com/github/${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}/build.log"
+          echo "JitPack URL: https://jitpack.io/com/github/${REPO_OWNER}/${REPO_NAME}/${VERSION}/build.log"
           
-          echo "JitPack URL: $JITPACK_URL"
+          # Trigger the build by making a request to the POM file
+          curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" \
+            "https://jitpack.io/com/github/${REPO_OWNER}/${REPO_NAME}/${VERSION}/${REPO_NAME}-${VERSION}.pom" || true
           
-          # Trigger the build by making a request
-          curl -s "https://jitpack.io/api/builds/com.github.${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}" || true
-          
-          # Alternative: Request the artifact directly to trigger build
-          curl -s -o /dev/null -w "%{http_code}" "https://jitpack.io/com/github/${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}/${{ steps.repo_info.outputs.REPO_NAME }}-${{ steps.repo_info.outputs.TAG }}.pom" || true
-          
-          echo "JitPack build triggered successfully!"
+          echo "JitPack build triggered!"
 
       - name: Wait and Check Build Status
+        env:
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
           echo "Waiting for JitPack to process the build..."
-          sleep 30
+          sleep 60
           
-          # Check the build status
-          STATUS_URL="https://jitpack.io/api/builds/com.github.${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}"
+          # Check the build log
+          BUILD_LOG_URL="https://jitpack.io/com/github/${REPO_OWNER}/${REPO_NAME}/${VERSION}/build.log"
           
-          echo "Checking build status at: $STATUS_URL"
-          curl -s "$STATUS_URL" | head -100 || echo "Could not fetch build status"
-          
-          echo ""
-          echo "Build log available at: https://jitpack.io/com/github/${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}/build.log"
+          echo "Build log URL: $BUILD_LOG_URL"
+          echo "---"
+          curl -s "$BUILD_LOG_URL" | tail -50 || echo "Build log not available yet"
 
