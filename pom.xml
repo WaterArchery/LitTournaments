@@ -44,10 +44,6 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
-                                    <pattern>net.wesjd.anvilgui</pattern>
-                                    <shadedPattern>me.waterarchery.littournaments.libs.anvilgui</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.jetbrains.annotations</pattern>
                                     <shadedPattern>me.waterarchery.littournaments.libs.annotations</shadedPattern>
                                 </relocation>
@@ -56,15 +52,6 @@
                                     <shadedPattern>me.waterarchery.littournaments.libs.utils</shadedPattern>
                                 </relocation>
                             </relocations>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludeDefaults>false</excludeDefaults>
-                                    <includes>
-                                        <include>me.waterarchery.litminions.utils.anvilgui</include>
-                                    </includes>
-                                </filter>
-                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -262,13 +249,6 @@
             <artifactId>votifierplus</artifactId>
             <version>1.0.7</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- AnvilGUIGui -->
-        <dependency>
-            <groupId>dev.triumphteam</groupId>
-            <artifactId>triumph-gui</artifactId>
-            <version>3.1.13</version>
         </dependency>
 
         <!-- For Heads -->
