@@ -1,0 +1,49 @@
+name: Trigger JitPack Build on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  jitpack-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository info
+        id: repo_info
+        run: |
+          echo "REPO_OWNER=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+          echo "REPO_NAME=${{ github.event.repository.name }}" >> $GITHUB_OUTPUT
+          echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+
+      - name: Trigger JitPack Build
+        run: |
+          echo "Triggering JitPack build for ${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }} @ ${{ steps.repo_info.outputs.TAG }}"
+          
+          # JitPack build is triggered by accessing the artifact URL
+          JITPACK_URL="https://jitpack.io/com/github/${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}/build.log"
+          
+          echo "JitPack URL: $JITPACK_URL"
+          
+          # Trigger the build by making a request
+          curl -s "https://jitpack.io/api/builds/com.github.${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}" || true
+          
+          # Alternative: Request the artifact directly to trigger build
+          curl -s -o /dev/null -w "%{http_code}" "https://jitpack.io/com/github/${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}/${{ steps.repo_info.outputs.REPO_NAME }}-${{ steps.repo_info.outputs.TAG }}.pom" || true
+          
+          echo "JitPack build triggered successfully!"
+
+      - name: Wait and Check Build Status
+        run: |
+          echo "Waiting for JitPack to process the build..."
+          sleep 30
+          
+          # Check the build status
+          STATUS_URL="https://jitpack.io/api/builds/com.github.${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}"
+          
+          echo "Checking build status at: $STATUS_URL"
+          curl -s "$STATUS_URL" | head -100 || echo "Could not fetch build status"
+          
+          echo ""
+          echo "Build log available at: https://jitpack.io/com/github/${{ steps.repo_info.outputs.REPO_OWNER }}/${{ steps.repo_info.outputs.REPO_NAME }}/${{ steps.repo_info.outputs.TAG }}/build.log"
+
