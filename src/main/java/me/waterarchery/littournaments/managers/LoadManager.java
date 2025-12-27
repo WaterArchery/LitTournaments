@@ -1,9 +1,13 @@
 package me.waterarchery.littournaments.managers;
 
+import com.chickennw.utils.libs.bstats.charts.SimpleBarChart;
+import com.chickennw.utils.libs.bstats.charts.SimplePie;
+import com.chickennw.utils.libs.bstats.charts.SingleLineChart;
 import com.chickennw.utils.libs.cmd.core.suggestion.SuggestionKey;
 import com.chickennw.utils.logger.LoggerFactory;
 import com.chickennw.utils.managers.CommandManager;
 import com.chickennw.utils.managers.ConfigManager;
+import com.chickennw.utils.models.metrics.PluginMetrics;
 import com.chickennw.utils.utils.ConfigUtils;
 import lombok.Getter;
 import me.waterarchery.littournaments.LitTournaments;
@@ -17,10 +21,6 @@ import me.waterarchery.littournaments.listeners.JoinLeaveListeners;
 import me.waterarchery.littournaments.listeners.tournaments.*;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.TournamentPlayer;
-import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SimpleBarChart;
-import org.bstats.charts.SimplePie;
-import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.slf4j.Logger;
@@ -180,7 +180,7 @@ public class LoadManager {
     private void registerMetrics() {
         LitTournaments instance = LitTournaments.getInstance();
         TournamentManager tournamentManager = TournamentManager.getInstance();
-        Metrics metrics = new Metrics(instance, 22957);
+        PluginMetrics metrics = new PluginMetrics(instance, 22957);
 
         metrics.addCustomChart(new SimpleBarChart("used_tournaments", () -> {
             Map<String, Integer> map = new HashMap<>();
