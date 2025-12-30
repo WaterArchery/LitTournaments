@@ -32,7 +32,6 @@ public class TournamentCommand extends BaseCommand {
     private final SoundsFile soundsFile;
 
     public TournamentCommand() {
-        super("littournaments", List.of("tournaments", "tournament"));
         langFile = ConfigUtils.get(LangFile.class);
         soundsFile = ConfigUtils.get(SoundsFile.class);
     }
@@ -200,7 +199,6 @@ public class TournamentCommand extends BaseCommand {
 
         CompletableFuture.supplyAsync(() -> Bukkit.getOfflinePlayer(playerName)).thenAcceptAsync(player -> {
             TournamentDatabase database = TournamentDatabase.getInstance();
-
             TournamentPlayer tournamentPlayer = playerManager.getPlayer(player.getUniqueId());
 
             if (tournamentPlayer == null) database.deleteFromTournament(player.getUniqueId(), tournament);

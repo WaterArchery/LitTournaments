@@ -24,19 +24,10 @@ public class PlayerManager {
     private static PlayerManager instance;
     private final ConcurrentHashMap<UUID, TournamentPlayer> players = new ConcurrentHashMap<>();
     private final Logger logger = LoggerFactory.getLogger();
-    private final ExecutorService executor;
 
     public static PlayerManager getInstance() {
         if (instance == null) instance = new PlayerManager();
         return instance;
-    }
-
-    private PlayerManager() {
-        ThreadFactory factory = Thread.ofVirtual()
-                .name("tournaments-player-worker-", 0)
-                .uncaughtExceptionHandler((thread, throwable) -> logger.error(throwable.getMessage(), throwable))
-                .factory();
-        executor = Executors.newThreadPerTaskExecutor(factory);
     }
 
     public TournamentPlayer getPlayer(UUID uuid) {
@@ -99,7 +90,7 @@ public class PlayerManager {
             }
 
             return pointMap;
-        }, executor).thenAccept((map) -> {
+        }, database.getExecutor()).thenAccept((map) -> {
             if (map == null) throw new NullPointerException("Map is null");
             map.forEach((k, v) -> player.getTournamentValueMap().put(k, v));
             player.setLoading(false);

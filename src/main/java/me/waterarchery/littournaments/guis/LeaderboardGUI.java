@@ -73,7 +73,7 @@ public class LeaderboardGUI extends LitPaginatedMenu {
         return items;
     }
 
-    private @NonNull ItemStack getItemStack(LitMenuItemHolder itemHolder, String playerName, TournamentValue tournamentValue, int position) {
+    private ItemStack getItemStack(LitMenuItemHolder itemHolder, String playerName, TournamentValue tournamentValue, int position) {
         ItemStack itemStack = itemHolder.getItemStack();
         ItemMeta itemMeta = itemStack.getItemMeta();
 
