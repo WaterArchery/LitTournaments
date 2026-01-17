@@ -12,7 +12,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,12 +21,10 @@ import java.util.Map;
 public class LeaderboardGUI extends LitPaginatedMenu {
 
     private final Tournament tournament;
-    private final boolean sendMessage;
 
-    public LeaderboardGUI(Player player, Tournament tournament, boolean sendMessage) {
+    public LeaderboardGUI(Player player, Tournament tournament) {
         super("leaderboard", player);
         this.tournament = tournament;
-        this.sendMessage = sendMessage;
     }
 
     @Override

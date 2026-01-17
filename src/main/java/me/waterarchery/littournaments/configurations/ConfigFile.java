@@ -18,9 +18,6 @@ public class ConfigFile extends OkaeriConfig {
 
     private String prefix = "<#47D4FF><bold>ʟɪᴛᴛᴏᴜʀɴᴀᴍᴇɴᴛs <reset><dark_gray>»<reset>  ";
 
-    @Comment("Currently only en and tr available")
-    private String language = "en";
-
     @Comment({"Its in seconds.", "Please don't set it under 60 seconds."})
     private int leaderboardRefresh = 60;
 

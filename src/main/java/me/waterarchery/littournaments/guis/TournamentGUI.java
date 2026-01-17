@@ -64,7 +64,7 @@ public class TournamentGUI extends LitMenu {
                         redraw(player);
                     }
                 } else if (click.getType() == ClickType.RIGHT) {
-                    LeaderboardGUI leaderboardGUI = new LeaderboardGUI(player, tournament, true);
+                    LeaderboardGUI leaderboardGUI = new LeaderboardGUI(player, tournament);
                     leaderboardGUI.openAsync(player);
                 }
 

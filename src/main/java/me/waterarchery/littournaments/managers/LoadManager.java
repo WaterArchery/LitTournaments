@@ -191,7 +191,6 @@ public class LoadManager {
         ConfigFile configFile = ConfigUtils.get(ConfigFile.class);
         metrics.addCustomChart(new SimplePie("webhook_used", () -> String.valueOf(configFile.getDiscordWebhook().isEnabled())));
         metrics.addCustomChart(new SimplePie("database_type", () -> configFile.getDatabase().getType()));
-        metrics.addCustomChart(new SimplePie("language_used", configFile::getLanguage));
         metrics.addCustomChart(new SingleLineChart("tournaments_count", () -> tournamentManager.getTournaments().size()));
     }
 }

@@ -102,7 +102,7 @@ public class TournamentCommand extends BaseCommand {
         Tournament tournament = tournamentManager.getTournament(tournamentName);
 
         if (tournament != null) {
-            LeaderboardGUI leaderboardGUI = new LeaderboardGUI(player, tournament, true);
+            LeaderboardGUI leaderboardGUI = new LeaderboardGUI(player, tournament);
             leaderboardGUI.openAsync(player);
         } else {
             ChatUtils.sendPrefixedMessage(player, langFile.getNoTournamentWithName());
