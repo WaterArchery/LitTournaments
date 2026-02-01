@@ -22,7 +22,8 @@ public class ValueManager {
     }
 
     public String getPlayerScore(TournamentPlayer tournamentPlayer, Tournament tournament) {
-        if (tournamentPlayer.isRegistered(tournament)) return String.valueOf(tournamentPlayer.getTournamentValueMap().get(tournament));
+        if (tournamentPlayer.isRegistered(tournament))
+            return String.valueOf(tournamentPlayer.getTournamentValueMap().get(tournament.getIdentifier()));
 
         return String.valueOf(0);
     }

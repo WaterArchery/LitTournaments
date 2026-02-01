@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PointManager {
 
@@ -50,9 +51,9 @@ public class PointManager {
                 TournamentDatabase database = TournamentDatabase.getInstance();
                 database.addPoint(uuid, tournament, point);
 
-                HashMap<Tournament, Long> map = tournamentPlayer.getTournamentValueMap();
-                long currentPoint = map.getOrDefault(tournament, 0L);
-                map.replace(tournament, currentPoint + point);
+                ConcurrentHashMap<String, Long> map = tournamentPlayer.getTournamentValueMap();
+                long currentPoint = map.getOrDefault(tournament.getIdentifier(), 0L);
+                map.replace(tournament.getIdentifier(), currentPoint + point);
             });
         } else if (tournamentPlayer.isLoading()) {
             Player player = Bukkit.getPlayer(uuid);

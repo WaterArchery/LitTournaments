@@ -85,7 +85,7 @@ public class LoadManager {
         TournamentManager tournamentManager = TournamentManager.getInstance();
         List<Tournament> tournaments = tournamentManager.getTournaments();
         TournamentDatabase database = TournamentDatabase.getInstance();
-        loadPlayers();
+        //loadPlayers();
         database.load(tournaments);
     }
 

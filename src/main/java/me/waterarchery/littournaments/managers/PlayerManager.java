@@ -32,21 +32,19 @@ public class PlayerManager {
     }
 
     public TournamentPlayer getPlayer(UUID uuid) {
-        for (TournamentPlayer tournamentPlayer : players.values()) {
-            if (tournamentPlayer.getUUID().equals(uuid)) return tournamentPlayer;
-        }
+        TournamentPlayer tournamentPlayer = players.get(uuid);
+        if (tournamentPlayer != null) return tournamentPlayer;
 
         return tryToLoadPlayer(uuid);
     }
 
     private TournamentPlayer tryToLoadPlayer(UUID uuid) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getUniqueId().equals(uuid)) {
-                TournamentPlayer tournamentPlayer = new TournamentPlayer(uuid);
-                players.put(tournamentPlayer.getUUID(), tournamentPlayer);
-                initializePlayer(tournamentPlayer, false);
-                return tournamentPlayer;
-            }
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            TournamentPlayer tournamentPlayer = new TournamentPlayer(uuid);
+            players.put(tournamentPlayer.getUUID(), tournamentPlayer);
+            initializePlayer(tournamentPlayer, false);
+            return tournamentPlayer;
         }
 
         return null;
@@ -54,7 +52,8 @@ public class PlayerManager {
 
     public void clearPlayerValues(Tournament tournament) {
         for (TournamentPlayer player : players.values()) {
-            if (player.getTournamentValueMap().get(tournament) != null) player.getTournamentValueMap().replace(tournament, 0L);
+            if (player.getTournamentValueMap().get(tournament.getIdentifier()) != null)
+                player.getTournamentValueMap().replace(tournament.getIdentifier(), 0L);
         }
     }
 
@@ -85,6 +84,7 @@ public class PlayerManager {
                             LangFile langFile = ConfigUtils.get(LangFile.class);
                             ChatUtils.sendPrefixedMessage(bukkitPlayer, langFile.getSuccessfullyRegisteredOnJoin());
                         }
+
                         player.join(tournament);
                     }
                 }
@@ -93,7 +93,8 @@ public class PlayerManager {
             return pointMap;
         }, database.getExecutor()).thenAccept((map) -> {
             if (map == null) throw new NullPointerException("Map is null");
-            map.forEach((k, v) -> player.getTournamentValueMap().put(k, v));
+
+            map.forEach((k, v) -> player.getTournamentValueMap().put(k.getIdentifier(), v));
             player.setLoading(false);
         });
     }
