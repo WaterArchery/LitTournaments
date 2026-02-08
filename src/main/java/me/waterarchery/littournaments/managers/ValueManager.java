@@ -39,7 +39,7 @@ public class ValueManager {
         TournamentLeaderboard leaderboard = tournament.getLeaderboard();
         TournamentValue value = leaderboard.getPlayer(position).orElse(null);
 
-        if (value != null) return value.getName();
+        if (value != null && value.getName() != null) return value.getName();
 
         LangFile langFile = ConfigUtils.get(LangFile.class);
         return langFile.getPlaceholders().getNone();

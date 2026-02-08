@@ -1,9 +1,11 @@
 package me.waterarchery.littournaments.models;
 
+import com.chickennw.utils.utils.ConfigUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.waterarchery.littournaments.configurations.LangFile;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -26,6 +28,9 @@ public class TournamentValue {
     @Column(name = "score", nullable = false)
     private long value;
 
+    @Transient
+    private String name;
+
     public TournamentValue(String tournamentId, UUID uuid, long value) {
         this.tournamentId = tournamentId;
         this.uuid = uuid;
@@ -34,7 +39,16 @@ public class TournamentValue {
 
     @Transient
     public String getName() {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        return offlinePlayer.getName();
+        if (name == null) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            name = offlinePlayer.getName();
+        }
+
+        if (name == null) {
+            LangFile langFile = ConfigUtils.get(LangFile.class);
+            name = langFile.getPlaceholders().getNone();
+        }
+
+        return name;
     }
 }

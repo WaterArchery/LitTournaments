@@ -2,11 +2,13 @@ package me.waterarchery.littournaments.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import me.waterarchery.littournaments.database.TournamentDatabase;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Getter
 @Setter
 public class TournamentPlayer {
@@ -40,5 +42,9 @@ public class TournamentPlayer {
         database.deleteFromTournament(uuid, tournament);
 
         tournamentValueMap.remove(tournament.getIdentifier());
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
     }
 }
