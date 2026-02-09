@@ -16,12 +16,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "tournament_scores")
+@IdClass(TournamentValueId.class)
 public class TournamentValue {
 
     @Id
     @Column(name = "tournament_id", nullable = false)
     private String tournamentId;
 
+    @Id
     @Column(name = "player", nullable = false)
     private UUID uuid;
 
