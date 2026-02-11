@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JoinLeaveListeners implements Listener {
 
@@ -21,7 +22,7 @@ public class JoinLeaveListeners implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerLeave(PlayerJoinEvent event) {
+    public void onPlayerLeave(PlayerQuitEvent event) {
         PlayerManager playerManager = PlayerManager.getInstance();
         Player player = event.getPlayer();
 
