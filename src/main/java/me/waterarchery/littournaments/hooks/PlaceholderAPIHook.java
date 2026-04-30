@@ -69,19 +69,19 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
             String tournamentName = params.split("_remaining_time_hours")[0];
             Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
-                return tournament.getRemainingTime().toHours() + "";
+                return (tournament.getRemainingTime().toHours() % 24) + "";
             }
         } else if (params.contains("_remaining_time_minutes")) {
             String tournamentName = params.split("_remaining_time_minutes")[0];
             Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
-                return tournament.getRemainingTime().toMinutes() + "";
+                return (tournament.getRemainingTime().toMinutes() % 60) + "";
             }
         } else if (params.contains("_remaining_time_seconds")) {
             String tournamentName = params.split("_remaining_time_seconds")[0];
             Tournament tournament = tournamentManager.getTournament(tournamentName);
             if (tournament != null) {
-                return tournament.getRemainingTime().toSeconds() + "";
+                return (tournament.getRemainingTime().toSeconds() % 60) + "";
             }
         } else if (params.contains("_remaining_time")) {
             String tournamentName = params.split("_remaining_time")[0];

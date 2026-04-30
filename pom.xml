@@ -14,7 +14,7 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <server.directory>${user.home}\Desktop\Testserver\plugins</server.directory>
+        <server.directory>${user.home}\Desktop\TestServer\plugins</server.directory>
     </properties>
 
     <build>
@@ -47,7 +47,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>${server.directory}/${project.artifactId}-${project.version}.jar</outputFile>
+                            <outputFile>${server.directory}/LitTournaments-${project.version}.jar</outputFile>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
