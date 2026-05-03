@@ -133,8 +133,7 @@ public class Tournament {
         int waitTime = configFile.getWaitTimeBetweenTournaments();
 
         CompletableFuture.runAsync(database.getReloadTournamentRunnable(tournament)).thenRun(() -> {
-            boolean mainServer = LitTournaments.getInstance().getConfig().getBoolean("MainServer");
-            if (!mainServer) return;
+            if (!configFile.isMainServer()) return;
 
             if (shouldRestartAfterFinished) {
                 tournamentManager.parseRewards(tournament);

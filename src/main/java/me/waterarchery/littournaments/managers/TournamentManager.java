@@ -166,16 +166,21 @@ public class TournamentManager {
             Player player = Bukkit.getPlayer(targetPlayer);
             if (player != null) {
                 ChatUtils.sendMessage(player, command.replace("[MESSAGE] ", ""));
+                logger.info("Sending tournament reward message to player: {}", targetPlayer);
+            } else {
+                logger.error("Player not found for tournament reward message: {}", targetPlayer);
             }
         } else if (command.startsWith("[BROADCAST]")) {
             String message = ChatUtils.colorizeLegacy(command.replace("[BROADCAST] ", ""));
             Bukkit.broadcastMessage(message);
+            logger.info("Broadcasting tournament reward message: {}", message);
         } else if (command.startsWith("[COMMAND]")) {
             command = command.replace("[COMMAND] ", "");
             if (targetPlayer != null) command = command.replace("%player%", targetPlayer);
 
             String finalCommand = command;
             ChickenUtils.getFoliaLib().getScheduler().runNextTick((task) -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand));
+            logger.info("Executing tournament reward command: {}", command);
         }
     }
 

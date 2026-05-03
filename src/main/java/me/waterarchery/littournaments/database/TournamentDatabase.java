@@ -39,21 +39,15 @@ public class TournamentDatabase extends Database {
         executor.submit(() -> {
             try (Session session = sessionFactory.openSession()) {
                 Transaction tx = session.beginTransaction();
-                TournamentValue existing = findByPlayerAndTournament(session, uuid, tournament.getIdentifier());
-                existing.setValue(existing.getValue() + point);
-                session.merge(existing);
-                tx.commit();
-            }
-        });
-    }
+                String tournamentId = tournament.getIdentifier();
 
-    public void setPoint(UUID uuid, Tournament tournament, long point) {
-        executor.submit(() -> {
-            try (Session session = sessionFactory.openSession()) {
-                Transaction tx = session.beginTransaction();
-                TournamentValue existing = findByPlayerAndTournament(session, uuid, tournament.getIdentifier());
-                existing.setValue(point);
-                session.merge(existing);
+                TournamentValue existing = findByPlayerAndTournament(session, uuid, tournamentId);
+                if (existing == null) {
+                    session.persist(new TournamentValue(tournamentId, uuid, point));
+                } else {
+                    existing.setValue(existing.getValue() + point);
+                }
+
                 tx.commit();
             }
         });
@@ -62,7 +56,7 @@ public class TournamentDatabase extends Database {
     public long getPoint(UUID uuid, Tournament tournament) {
         try (Session session = sessionFactory.openSession()) {
             TournamentValue existing = findByPlayerAndTournament(session, uuid, tournament.getIdentifier());
-            return existing.getValue();
+            return existing == null ? 0L : existing.getValue();
         }
     }
 
@@ -70,14 +64,12 @@ public class TournamentDatabase extends Database {
         executor.submit(() -> {
             try (Session session = sessionFactory.openSession()) {
                 Transaction tx = session.beginTransaction();
-                tx.begin();
 
                 String tournamentId = tournament.getIdentifier();
                 TournamentValue existing = findByPlayerAndTournament(session, uuid, tournamentId);
 
                 if (existing == null) {
-                    TournamentValue newValue = new TournamentValue(tournamentId, uuid, 0L);
-                    session.persist(newValue);
+                    session.persist(new TournamentValue(tournamentId, uuid, 0L));
                 }
 
                 tx.commit();
@@ -89,12 +81,11 @@ public class TournamentDatabase extends Database {
         executor.submit(() -> {
             try (Session session = sessionFactory.openSession()) {
                 Transaction tx = session.beginTransaction();
-                tx.begin();
 
                 session.createQuery("DELETE FROM TournamentValue t WHERE t.uuid = :uuid AND t.tournamentId = :tournamentId")
-                        .setParameter("uuid", uuid)
-                        .setParameter("tournamentId", tournament.getIdentifier())
-                        .executeUpdate();
+                    .setParameter("uuid", uuid)
+                    .setParameter("tournamentId", tournament.getIdentifier())
+                    .executeUpdate();
 
                 tx.commit();
             }
@@ -111,10 +102,10 @@ public class TournamentDatabase extends Database {
                 TournamentLeaderboard leaderboard = tournament.getLeaderboard();
 
                 List<TournamentValue> results = session.createQuery(
-                                "SELECT t FROM TournamentValue t WHERE t.tournamentId = :tournamentId ORDER BY t.value DESC",
-                                TournamentValue.class)
-                        .setParameter("tournamentId", tournament.getIdentifier())
-                        .getResultList();
+                        "SELECT t FROM TournamentValue t WHERE t.tournamentId = :tournamentId ORDER BY t.value DESC",
+                        TournamentValue.class)
+                    .setParameter("tournamentId", tournament.getIdentifier())
+                    .getResultList();
 
                 int pos = 1;
                 for (TournamentValue value : results) {
@@ -129,11 +120,10 @@ public class TournamentDatabase extends Database {
         executor.submit(() -> {
             try (Session session = sessionFactory.openSession()) {
                 Transaction tx = session.beginTransaction();
-                tx.begin();
 
                 session.createQuery("DELETE FROM TournamentValue t WHERE t.tournamentId = :tournamentId")
-                        .setParameter("tournamentId", tournament.getIdentifier())
-                        .executeUpdate();
+                    .setParameter("tournamentId", tournament.getIdentifier())
+                    .executeUpdate();
 
                 tx.commit();
             }
@@ -141,14 +131,12 @@ public class TournamentDatabase extends Database {
     }
 
     private TournamentValue findByPlayerAndTournament(Session session, UUID uuid, String tournamentId) {
-        List<TournamentValue> results = session.createQuery(
-                        "SELECT t FROM TournamentValue t WHERE t.uuid = :uuid AND t.tournamentId = :tournamentId",
-                        TournamentValue.class)
-                .setParameter("uuid", uuid)
-                .setParameter("tournamentId", tournamentId)
-                .setMaxResults(1)
-                .getResultList();
-
-        return results.isEmpty() ? new TournamentValue(tournamentId, uuid, 0) : results.getFirst();
+        return session.createQuery(
+                "SELECT t FROM TournamentValue t WHERE t.uuid = :uuid AND t.tournamentId = :tournamentId",
+                TournamentValue.class)
+            .setParameter("uuid", uuid)
+            .setParameter("tournamentId", tournamentId)
+            .setMaxResults(1)
+            .uniqueResult();
     }
 }
