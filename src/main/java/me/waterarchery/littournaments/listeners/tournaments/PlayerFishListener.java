@@ -5,7 +5,7 @@ import me.waterarchery.littournaments.managers.TournamentManager;
 import me.waterarchery.littournaments.models.Tournament;
 import me.waterarchery.littournaments.models.tournaments.PlayerFishTournament;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,18 +17,20 @@ import java.util.List;
 public class PlayerFishListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockPlace(PlayerFishEvent event) {
+    public void onPlayerFish(PlayerFishEvent event) {
         PointManager pointManager = PointManager.getInstance();
         TournamentManager tournamentManager = TournamentManager.getInstance();
         Player player = event.getPlayer();
-        Entity entity = event.getCaught();
 
-        if (entity == null) return;
+        if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) return;
+        if (!(event.getCaught() instanceof Item caught)) return;
 
-        World world = entity.getWorld();
+        World world = caught.getWorld();
+        String actionName = caught.getItemStack().getType().name();
+
         List<Tournament> tournaments = tournamentManager.getTournaments(PlayerFishTournament.class);
         for (Tournament tournament : tournaments) {
-            pointManager.addPoint(player.getUniqueId(), tournament, world.getName(), entity.getType().name(), 1);
+            pointManager.addPoint(player.getUniqueId(), tournament, world.getName(), actionName, 1);
         }
     }
 

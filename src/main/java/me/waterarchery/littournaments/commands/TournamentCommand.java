@@ -39,7 +39,7 @@ public class TournamentCommand extends BaseCommand {
     @Command
     public void defaultCmd(Player player) {
         TournamentGUI gui = new TournamentGUI(player);
-        gui.openAsync(player, gui.getGuiElements());
+        gui.openAsync(player);
     }
 
     @Command("join")

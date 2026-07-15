@@ -15,6 +15,8 @@ import me.waterarchery.littournaments.commands.TournamentCommand;
 import me.waterarchery.littournaments.configurations.ConfigFile;
 import me.waterarchery.littournaments.configurations.LangFile;
 import me.waterarchery.littournaments.configurations.SoundsFile;
+import me.waterarchery.littournaments.configurations.menus.LeaderboardMenuFile;
+import me.waterarchery.littournaments.configurations.menus.TournamentMenuFile;
 import me.waterarchery.littournaments.database.TournamentDatabase;
 import me.waterarchery.littournaments.hooks.PlaceholderAPIHook;
 import me.waterarchery.littournaments.listeners.JoinLeaveListeners;
@@ -69,7 +71,8 @@ public class LoadManager {
         configManager.loadOkaeriConfig(ConfigFile.class);
         configManager.loadOkaeriConfig(LangFile.class);
         configManager.loadOkaeriConfig(SoundsFile.class);
-        configManager.createFiles("menu");
+        configManager.loadOkaeriConfig(TournamentMenuFile.class, "menu");
+        configManager.loadOkaeriConfig(LeaderboardMenuFile.class, "menu");
 
         LitTournaments instance = LitTournaments.getInstance();
         File tournamentsFolder = new File(instance.getDataFolder(), "/tournaments");
